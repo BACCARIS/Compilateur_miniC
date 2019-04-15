@@ -106,42 +106,34 @@ void analyse_tree(node_t root);
 /* à compléter : grammaire hors-contexte et construction de l'arbre */
 
 program:
-        listdeclnonnull main
+        listdecl main
         {
             $$ = make_node(NODE_PROGRAM, 2, $1, $2);
-            analyse_tree($$);
-        }
-        | main
-        {
-            $$ = make_node(NODE_PROGRAM, 2, NULL, $1);
             analyse_tree($$);
         }
         ;
 
 listdecl:
-        listdeclnonnull
+        listdeclnonnull 
+        |
+        {
+        	$$ = NULL;
+        }
         ;
- 
-listdecl : listdecl decl
-{
-    $$ = make_node(NODE_LIST, 2, $1, $2);
-}
-| decl
-{
-    $$ = $1;
-}
-;
 
-listdeclnonnull:
+listdeclnonnull: 
                 vardecl
                 | listdeclnonnull vardecl
+                {
+                	$$ = make_node(NODE_LIST, 2, $1, $2);
+                }
                 ;
 
 vardecl:
         type listtypedecl TOK_SEMICOL
         {
-    		$$ = listdecl;
-		}
+        	$$ = make_node(NODE_DECLS, 2, $1, $2);
+        }
         ;
 
 type:
@@ -168,17 +160,30 @@ decl:
     	$$ = make_node(NODE_DECL, 2, $1, $3);
 	}
     ;
+  
+listdecl : listdecl decl
+		{
+		    $$ = make_node(NODE_LIST, 2, $1, $2);
+		}
+		| decl
+		{
+		    $$ = $1;
+		}
+		;
 
 main:
     type ident TOK_LPAR TOK_RPAR block
     {
-    	$$ = make_node(NODE_FUN, 3, $1, $2, $5)
+    	$$ = make_node(NODE_FUNC, 3, $1, $2, $5);
     }
     ;
 
 listinst:
         listinstnonnull
         |
+        {
+        	$$ = NULL;
+        }
         ;
 
 listinstnonnull : inst
@@ -213,7 +218,7 @@ inst            : exp TOK_SEMICOL
 				}
                 | TOK_DO inst TOK_WHILE TOK_LPAR exp TOK_RPAR TOK_SEMICOL
                 {
-				    $$ = make_node(NODE_DOWILE, 2, $5, $2);
+				    $$ = make_node(NODE_DOWHILE, 2, $5, $2);
 				}
                 | block
                 {
@@ -373,6 +378,9 @@ printparam:
 
 ident:
     TOK_IDENT
+    {
+    	$$ = make_node(NODE_IDENT, 1, $1);
+    }
     ;
 
 
@@ -383,7 +391,38 @@ ident:
 
 node_t make_node(node_nature nature , int nbArg, ...)
 {
-    return NULL;
+	node_t ptr = malloc(sizeof(node_t));
+
+	ptr -> node_nature = nature;
+    
+    // node_type type;
+	// int64_t value;
+    // int32_t offset;
+    // bool global_decl;
+    // int32_t lineno;
+    // int32_t stack_size;
+	
+	ptr ->nops = nbArg;
+
+	node_t * opr = malloc(sizeof(node_t)*nbArg);
+	ptr -> opr = opr;
+
+    
+    // struct _node_s * decl_node;
+
+    // char * ident;
+    if ( nature = NODE_IDENT ){
+    	*ident = truc;
+    }
+
+
+    // char * str;
+
+    // Pour l'afichage du graphe
+    // int32_t node_num;
+
+
+    return ptr;
 }
 
 

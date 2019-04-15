@@ -61,6 +61,11 @@ typedef enum node_nature_s {
     NODE_UMINUS,
     NODE_AFFECT,
     NODE_PRINT,
+    NODE_LPAR,
+    NODE_RPAR,
+    NODE_TRUE,
+    NODE_FALSE,
+    NODE_STRING,
 
 } node_nature;
 
