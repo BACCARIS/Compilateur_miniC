@@ -22,6 +22,7 @@ extern int yylineno;
 
 void yyerror(char *s);
 void analyse_tree(node_t root);
+node_t make_node(node_nature nature , int nbArg, ...);
 
 // à compléter
 
@@ -391,45 +392,69 @@ ident:
 
 node_t make_node(node_nature nature , int nbArg, ...)
 {
-	node_t ptr = malloc(sizeof(node_t));
+	int i = 0;
 
-	ptr -> node_nature = nature;
-    
-    // node_type type;
-	// int64_t value;
-    // int32_t offset;
-    // bool global_decl;
-    // int32_t lineno;
-    // int32_t stack_size;
-	
-	ptr ->nops = nbArg;
+	// allocation de memoire pour le noeud
+	node_t nouveau_noeud = malloc(sizeof(node_t));
 
+	nouveau_noeud -> nature = nature;
+
+	// ------ On cree les fils ------
 	node_t * opr = malloc(sizeof(node_t)*nbArg);
-	ptr -> opr = opr;
+	printf("%d", nbArg);
+	va_list arg_noeud;
+	va_start(arg_noeud, nbArg);
+	for (i = 0; i < nbArg; i++) {
+		//*((nouveau_noeud -> opr) + i) = va_arg(arg_noeud, node_t); // tableau de pointeur vers les enfants
+		node_t temp = va_arg(arg_noeud, node_t);
+		if(!temp){
+			printf("nature %d\n", temp -> nature);
+		}
+		else{
+			printf("null!\n");
+		}
+      }
+    va_end(arg_noeud);
 
-    
-    // struct _node_s * decl_node;
+	// ------ On remplie le noeud ------
 
-    // char * ident;
-    if ( nature = NODE_IDENT ){
-    	*ident = truc;
-    }
+	nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
 
+	nouveau_noeud -> lineno = yylineno;
 
-    // char * str;
+	if( nature == NODE_IDENT)
+	{
+		nouveau_noeud -> ident = yylval.strval;
+	}
 
-    // Pour l'afichage du graphe
-    // int32_t node_num;
+	if( nature == NODE_TYPE){
+		nouveau_noeud -> type = yylval.ptr -> type;
+	}
 
+	if( nature == NODE_INTVAL || nature == NODE_BOOLVAL ){
+		nouveau_noeud -> value = (int64_t)yylval.intval;
+	}
 
-    return ptr;
+	if( nature == NODE_STRINGVAL){
+		nouveau_noeud -> str = yylval.strval; //  A REVOIR
+	}
+
+	if( nature == NODE_STRINGVAL){
+		nouveau_noeud -> value = (int64_t)yylval.strval;
+	}
+
+	printf("--> %d\n", nature);
+
+    return nouveau_noeud;
 }
+
 
 
 
 
 void analyse_tree(node_t root) {
     /* à compléter */
+
 }
 
 

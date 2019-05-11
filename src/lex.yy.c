@@ -577,7 +577,7 @@ int yyparse(void);
 int fileno(FILE * stream);
 
 /* à compléter : variables globales éventuelles */
-char * infile = NULL;
+char * infile = "test.c";
 
 
 /* à compléter : définitions */
@@ -2087,8 +2087,14 @@ int main(int argc, char ** argv) {
     /* à compléter */
     // ...
 
+
     yyin = fopen(infile, "r");
+    if(yyin == NULL){
+    	printf("error opening file");
+    	return 1;
+    	}
     yyparse();
+
     fclose(yyin);
     yylex_destroy();
     return 0;
