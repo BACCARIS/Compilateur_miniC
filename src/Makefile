@@ -14,7 +14,7 @@ y.tab.c: grammar.y defs.h
 	yacc -d $<
 
 lex.y.cc: lexico.l defs.h
-	lex  -d $<
+	lex $<
 
 common.o: common.c common.h defs.h
 	gcc $(CFLAGS) $(INCLUDE) -o $@ -c $<

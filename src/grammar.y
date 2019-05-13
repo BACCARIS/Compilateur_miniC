@@ -114,7 +114,7 @@ program:
         }
         | main
         {
-            $$ = make_node(NODE_PROGRAM, 1, $1 );
+            $$ = make_node(NODE_PROGRAM, 2, NULL, $1 );
             printf("PROGRAM\n");
         }
         ;
@@ -122,7 +122,7 @@ program:
 listdecl:
         listdeclnonnull
         {
-          $$ = NULL;
+          $$ = $1;
           printf("listdecl\n");
 
         }
@@ -136,7 +136,7 @@ listdecl:
 listdeclnonnull:
                 vardecl
                 {
-                  $$ = NULL;
+                  $$ = $1;
                   printf("listdeclnonnull\n");
                 }
                 | listdeclnonnull vardecl
@@ -175,7 +175,7 @@ type:
 listtypedecl:
             decl
             {
-              $$ = NULL;
+              $$ = $1;
               printf("listtypedecl\n");
             }
             | listtypedecl TOK_COMMA decl
@@ -371,7 +371,7 @@ exp:
 	}
     | ident TOK_AFFECT exp
     {
-    	$$ = make_node(NODE_AFFECT, 1, $1);
+    	$$ = make_node(NODE_AFFECT, 1, $1, $3);
 	}
     | TOK_INTVAL
     {
@@ -432,38 +432,14 @@ ident:
 
 node_t make_node(node_nature nature , int nbArg, ...)
 {
-	printf("\n--> nature noeud courant %d\n", nature);
+	printf("\n--> nature noeud courant %s\n", node_nature2string(nature));
   printf("\nnombre argument   : %d\n", nbArg);
 	int i = 0;
 
 	// allocation de memoire pour le noeud
 	node_t nouveau_noeud = malloc(sizeof(node_t));
 
-  nouveau_noeud -> nature = nature;
-  nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
 
-	nouveau_noeud -> lineno = yylineno;
-
-	if( nature == NODE_IDENT)
-	{
-		nouveau_noeud -> ident = yylval.strval;
-	}
-
-	if( nature == NODE_TYPE){
-		nouveau_noeud -> type = yylval.ptr -> type;
-	}
-
-	if( nature == NODE_INTVAL || nature == NODE_BOOLVAL ){
-		nouveau_noeud -> value = (int64_t)yylval.intval;
-	}
-
-	if( nature == NODE_STRINGVAL){
-		nouveau_noeud -> str = yylval.strval; //  A REVOIR
-	}
-
-	if( nature == NODE_STRINGVAL){
-		nouveau_noeud -> value = (int64_t)yylval.strval;
-  }
 
 	// ------ On cree les fils ------
   if (nbArg > 0){
@@ -479,7 +455,7 @@ node_t make_node(node_nature nature , int nbArg, ...)
       }
       else
       {
-        printf("\n--> nature noeud fils : %d\n", temp->nature);
+        printf("\n--> nature noeud fils : %s\n", node_nature2string(temp->nature));
       }
     }
     va_end(arg_noeud);
