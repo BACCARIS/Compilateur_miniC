@@ -79,17 +79,16 @@ extern int yydebug;
     TOK_STRING = 289,
     TOK_DO = 290,
     TOK_THEN = 291,
-    TOK_AFECT = 292,
-    TOK_OR = 293,
-    TOK_AND = 294,
-    TOK_BOR = 295,
-    TOK_BXOR = 296,
-    TOK_BAND = 297,
-    TOK_SRL = 298,
-    TOK_SRA = 299,
-    ROK_SLL = 300,
-    TOK_NOT = 301,
-    TOK_BNOT = 302
+    TOK_OR = 292,
+    TOK_AND = 293,
+    TOK_BOR = 294,
+    TOK_BXOR = 295,
+    TOK_BAND = 296,
+    TOK_SRL = 297,
+    TOK_SRA = 298,
+    ROK_SLL = 299,
+    TOK_NOT = 300,
+    TOK_BNOT = 301
   };
 #endif
 /* Tokens.  */
@@ -127,17 +126,16 @@ extern int yydebug;
 #define TOK_STRING 289
 #define TOK_DO 290
 #define TOK_THEN 291
-#define TOK_AFECT 292
-#define TOK_OR 293
-#define TOK_AND 294
-#define TOK_BOR 295
-#define TOK_BXOR 296
-#define TOK_BAND 297
-#define TOK_SRL 298
-#define TOK_SRA 299
-#define ROK_SLL 300
-#define TOK_NOT 301
-#define TOK_BNOT 302
+#define TOK_OR 292
+#define TOK_AND 293
+#define TOK_BOR 294
+#define TOK_BXOR 295
+#define TOK_BAND 296
+#define TOK_SRL 297
+#define TOK_SRA 298
+#define ROK_SLL 299
+#define TOK_NOT 300
+#define TOK_BNOT 301
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -150,7 +148,7 @@ union YYSTYPE
     char * strval;
     node_t ptr;
 
-#line 154 "y.tab.h" /* yacc.c:1909  */
+#line 152 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -25,14 +25,14 @@ typedef enum node_nature_s {
     NODE_PROGRAM,
     NODE_BLOCK,
     NODE_LIST,
-    NODE_DECLS,
-    NODE_DECL,
-    NODE_IDENT,
-    NODE_TYPE,
-    NODE_INTVAL,
-    NODE_BOOLVAL,
+    NODE_DECLS,//4
+    NODE_DECL, //5
+    NODE_IDENT, //6
+    NODE_TYPE, //7
+    NODE_INTVAL, //8
+    NODE_BOOLVAL,//9
     NODE_STRINGVAL,
-    NODE_FUNC,
+    NODE_FUNC,//11
     NODE_IF,
     NODE_WHILE,
     NODE_FOR,
@@ -91,7 +91,7 @@ typedef struct _node_s {
 
     int32_t nops;
     struct _node_s ** opr;
-    
+
     struct _node_s * decl_node;
 
     char * ident;
@@ -105,4 +105,3 @@ typedef struct _node_s {
 typedef node_s * node_t;
 
 #endif
-

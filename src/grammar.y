@@ -77,7 +77,7 @@ node_t make_node(node_nature nature , int nbArg, ...);
 
 
 /* a = b = c + d <=> b = c + d; a = b; */
-%right TOK_AFECT
+%right TOK_AFFECT
 
 %left   TOK_OR
 %left   TOK_AND
@@ -110,23 +110,39 @@ program:
         listdecl main
         {
             $$ = make_node(NODE_PROGRAM, 2, $1, $2);
-            analyse_tree($$);
+            printf("PROGRAM\n");
+        }
+        | main
+        {
+            $$ = make_node(NODE_PROGRAM, 1, $1 );
+            printf("PROGRAM\n");
         }
         ;
 
 listdecl:
-        listdeclnonnull 
+        listdeclnonnull
+        {
+          $$ = NULL;
+          printf("listdecl\n");
+
+        }
         |
         {
-        	$$ = NULL;
+          $$ = NULL;
+          printf("listdecl\n");
         }
         ;
 
-listdeclnonnull: 
+listdeclnonnull:
                 vardecl
+                {
+                  $$ = NULL;
+                  printf("listdeclnonnull\n");
+                }
                 | listdeclnonnull vardecl
                 {
                 	$$ = make_node(NODE_LIST, 2, $1, $2);
+                  printf("listdeclnonnull\n");
                 }
                 ;
 
@@ -134,70 +150,91 @@ vardecl:
         type listtypedecl TOK_SEMICOL
         {
         	$$ = make_node(NODE_DECLS, 2, $1, $2);
+          printf("vardecl\n");
         }
         ;
 
 type:
     TOK_INT
-    |TOK_BOOL
-    |TOK_VOID
     {
-    $$ = make_node(NODE_TYPE, 0);
+    	 $$ = make_node(NODE_TYPE, 0);
+       printf("typeInt\n");
+    }
+    | TOK_BOOL
+    {
+    	 $$ = make_node(NODE_TYPE, 0);
+       printf("typeBool\n");
+    }
+    | TOK_VOID
+    {
+     	$$ = make_node(NODE_TYPE, 0);
+      printf("typeVoid\n");
 	}
     ;
 
 listtypedecl:
             decl
+            {
+              $$ = NULL;
+              printf("listtypedecl\n");
+            }
             | listtypedecl TOK_COMMA decl
+            {
+              $$ = NULL;
+              printf("listtypedecl\n");
+            }
             ;
 
 decl:
     ident
     {
     	$$ = make_node(NODE_DECL, 1, $1);
-	}
+      printf("decl");
+    }
     | ident TOK_AFFECT exp
-	{
+    {
     	$$ = make_node(NODE_DECL, 2, $1, $3);
-	}
+      printf("TOK_AFFECT\n");
+    }
     ;
-  
-listdecl : listdecl decl
-		{
-		    $$ = make_node(NODE_LIST, 2, $1, $2);
-		}
-		| decl
-		{
-		    $$ = $1;
-		}
-		;
 
 main:
     type ident TOK_LPAR TOK_RPAR block
     {
     	$$ = make_node(NODE_FUNC, 3, $1, $2, $5);
+      printf("main");
+
     }
     ;
 
 listinst:
         listinstnonnull
+        {
+          $$ = NULL;
+          printf("listinst");
+        }
         |
         {
         	$$ = NULL;
+          printf("listinst");
         }
         ;
 
-listinstnonnull : inst
+listinstnonnull :
+        inst
 				{
 				    $$ = $1;
+            printf("listinstnonnull");
 				}
-                | listinstnonnull inst
-                {
+        | listinstnonnull inst
+        {
 				    $$ = make_node(NODE_LIST, 2, $1, $2);
+            printf("listinstnull");
 				}
                 ;
 
-inst            : exp TOK_SEMICOL
+inst            :
+        exp TOK_SEMICOL
 				{
 				    $$ = $1;
 				}
@@ -226,6 +263,9 @@ inst            : exp TOK_SEMICOL
 				    $$ = $1;
 				}
                 | TOK_SEMICOL
+                {
+                  $$ = NULL;
+                }
                 | TOK_PRINT TOK_LPAR printparam_list TOK_RPAR TOK_SEMICOL
                 {
 				    $$ = make_node(NODE_PRINT, 1, $3);
@@ -236,118 +276,118 @@ block:
     TOK_LACC listdecl listinst TOK_RACC
     {
     	$$ = make_node(NODE_BLOCK, 2, $2, $3);
-	}
+    }
     ;
 
 exp:
     exp TOK_MUL exp
     {
-    	$$ = make_node(NODE_MUL, 2, $1, $3);  
+    	$$ = make_node(NODE_MUL, 2, $1, $3);
 	}
     | exp TOK_DIV exp
     {
-    	$$ = make_node(NODE_DIV, 2, $1, $3);  
+    	$$ = make_node(NODE_DIV, 2, $1, $3);
 	}
     | exp TOK_PLUS exp
     {
-    	$$ = make_node(NODE_PLUS, 2, $1, $3);  
+    	$$ = make_node(NODE_PLUS, 2, $1, $3);
 	}
     | exp TOK_MINUS exp
     {
-    	$$ = make_node(NODE_MINUS, 2, $1, $3);  
+    	$$ = make_node(NODE_MINUS, 2, $1, $3);
 	}
     | exp TOK_MOD exp
     {
-    	$$ = make_node(NODE_MOD, 2, $1, $3);  
+    	$$ = make_node(NODE_MOD, 2, $1, $3);
 	}
     | exp TOK_LT exp
     {
-    	$$ = make_node(NODE_LT, 2, $1, $3);  
+    	$$ = make_node(NODE_LT, 2, $1, $3);
 	}
     | exp TOK_GT exp
     {
-    	$$ = make_node(NODE_GT, 2, $1, $3);  
+    	$$ = make_node(NODE_GT, 2, $1, $3);
 	}
     | TOK_MINUS exp %prec TOK_MINUS
     {
-    	$$ = make_node(NODE_MINUS, 1, $2);  
+    	$$ = make_node(NODE_MINUS, 1, $2);
 	}
     | exp TOK_GE exp
     {
-    	$$ = make_node(NODE_GE, 2, $1, $3);  
+    	$$ = make_node(NODE_GE, 2, $1, $3);
 	}
     | exp TOK_LE exp
     {
-    	$$ = make_node(NODE_LE, 2, $1, $3);  
+    	$$ = make_node(NODE_LE, 2, $1, $3);
 	}
     | exp TOK_EQ exp
     {
-    	$$ = make_node(NODE_EQ, 2, $1, $3);  
+    	$$ = make_node(NODE_EQ, 2, $1, $3);
 	}
     | exp TOK_NE exp
     {
-    	$$ = make_node(NODE_NE, 2, $1, $3);  
+    	$$ = make_node(NODE_NE, 2, $1, $3);
 	}
     | exp TOK_AND exp
     {
-    	$$ = make_node(NODE_AND, 2, $1, $3);  
+    	$$ = make_node(NODE_AND, 2, $1, $3);
 	}
     | exp TOK_OR exp
     {
-    	$$ = make_node(NODE_OR, 2, $1, $3);  
+    	$$ = make_node(NODE_OR, 2, $1, $3);
 	}
-    | exp TOK_BAND exp
+    | exp TOK_BAND exp listdecl
     {
-    	$$ = make_node(NODE_BAND, 2, $1, $3);  
+    	$$ = make_node(NODE_BAND, 2, $1, $3);
 	}
     | exp TOK_BOR exp
     {
-    	$$ = make_node(NODE_BOR, 2, $1, $3);  
+    	$$ = make_node(NODE_BOR, 2, $1, $3);
 	}
     | exp TOK_BXOR exp
     {
-    	$$ = make_node(NODE_BXOR, 2, $1, $3);  
+    	$$ = make_node(NODE_BXOR, 2, $1, $3);
 	}
     | exp TOK_SRL exp
     {
-    	$$ = make_node(NODE_SRL, 2, $1, $3);  
+    	$$ = make_node(NODE_SRL, 2, $1, $3);
 	}
     | exp TOK_SRA exp
     {
-    	$$ = make_node(NODE_SRA, 2, $1, $3);  
+    	$$ = make_node(NODE_SRA, 2, $1, $3);
 	}
     /* | exp TOK_SLL exp */
     | TOK_NOT exp
     {
-    	$$ = make_node(NODE_NOT, 1, $2);  
+    	$$ = make_node(NODE_NOT, 1, $2);
 	}
     | TOK_BNOT exp
     {
-    	$$ = make_node(NODE_BNOT, 1, $2);  
+    	$$ = make_node(NODE_BNOT, 1, $2);
 	}
     | TOK_LPAR exp TOK_RPAR
     {
-    	$$ = make_node(NODE_LPAR, 1, $2);  
+    	$$ = make_node(NODE_LPAR, 1, $2);
 	}
     | ident TOK_AFFECT exp
     {
-    	$$ = make_node(NODE_AFFECT, 1, $1);  
+    	$$ = make_node(NODE_AFFECT, 1, $1);
 	}
     | TOK_INTVAL
     {
-    	$$ = make_node(NODE_INTVAL, 0);  
+    	$$ = make_node(NODE_INTVAL, 0);
 	}
     | TOK_TRUE
     {
-    	$$ = make_node(NODE_TRUE, 0);  
+    	$$ = make_node(NODE_TRUE, 0);
 	}
     | TOK_FALSE
     {
-    	$$ = make_node(NODE_FALSE, 0);  
+    	$$ = make_node(NODE_FALSE, 0);
 	}
     | TOK_STRING
     {
-    	$$ = make_node(NODE_STRING, 0);  
+    	$$ = make_node(NODE_STRING, 0);
 	}
     | ident
     {
@@ -367,8 +407,8 @@ printparam_list:
                 ;
 
 printparam:
-            ident
-            {
+      ident
+      {
     			$$ = $1;
 			}
             | TOK_STRING
@@ -380,7 +420,7 @@ printparam:
 ident:
     TOK_IDENT
     {
-    	$$ = make_node(NODE_IDENT, 1, $1);
+    	$$ = make_node(NODE_IDENT, 0);
     }
     ;
 
@@ -392,32 +432,72 @@ ident:
 
 node_t make_node(node_nature nature , int nbArg, ...)
 {
+	printf("\n--> nature noeud courant %d\n", nature);
+  printf("\nnombre argument   : %d\n", nbArg);
 	int i = 0;
 
 	// allocation de memoire pour le noeud
 	node_t nouveau_noeud = malloc(sizeof(node_t));
 
-	nouveau_noeud -> nature = nature;
+  nouveau_noeud -> nature = nature;
+  nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
+
+	nouveau_noeud -> lineno = yylineno;
+
+	if( nature == NODE_IDENT)
+	{
+		nouveau_noeud -> ident = yylval.strval;
+	}
+
+	if( nature == NODE_TYPE){
+		nouveau_noeud -> type = yylval.ptr -> type;
+	}
+
+	if( nature == NODE_INTVAL || nature == NODE_BOOLVAL ){
+		nouveau_noeud -> value = (int64_t)yylval.intval;
+	}
+
+	if( nature == NODE_STRINGVAL){
+		nouveau_noeud -> str = yylval.strval; //  A REVOIR
+	}
+
+	if( nature == NODE_STRINGVAL){
+		nouveau_noeud -> value = (int64_t)yylval.strval;
+  }
 
 	// ------ On cree les fils ------
-	node_t * opr = malloc(sizeof(node_t)*nbArg);
-	printf("%d", nbArg);
-	va_list arg_noeud;
-	va_start(arg_noeud, nbArg);
-	for (i = 0; i < nbArg; i++) {
+  if (nbArg > 0){
+    nouveau_noeud -> opr = (node_t *)malloc(nbArg * sizeof(node_t));
+    va_list arg_noeud;
+    va_start(arg_noeud, nbArg);
+
+    for( i = 0; i < nbArg; i++){
+      node_t temp = va_arg(arg_noeud, node_t);
+      if(!temp)
+      {
+        printf("\n----null\n");
+      }
+      else
+      {
+        printf("\n--> nature noeud fils : %d\n", temp->nature);
+      }
+    }
+    va_end(arg_noeud);
+  }
+
+	/*for (i = 0; i < nbArg; i++) {
 		//*((nouveau_noeud -> opr) + i) = va_arg(arg_noeud, node_t); // tableau de pointeur vers les enfants
 		node_t temp = va_arg(arg_noeud, node_t);
 		if(!temp){
-			printf("nature %d\n", temp -> nature);
+			printf("----nature non null %p\n\n", temp);
 		}
 		else{
 			printf("null!\n");
 		}
-      }
-    va_end(arg_noeud);
+  }*/
 
-	// ------ On remplie le noeud ------
-
+/*	// ------ On remplie le noeud ------
+nouveau_noeud -> nature = nature;
 	nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
 
 	nouveau_noeud -> lineno = yylineno;
@@ -443,7 +523,7 @@ node_t make_node(node_nature nature , int nbArg, ...)
 		nouveau_noeud -> value = (int64_t)yylval.strval;
 	}
 
-	printf("--> %d\n", nature);
+	*/
 
     return nouveau_noeud;
 }

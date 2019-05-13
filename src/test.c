@@ -1,8 +1,6 @@
 void main()
 {
-	int a = 3;
-	if(a==0)
-	{
-		
-	}
+	int a = 0;
+	int b;
+	b = a + 2;
 }
