@@ -86,7 +86,7 @@ typedef struct _node_s {
 
     int32_t nops;
     struct _node_s ** opr;
-
+    
     struct _node_s * decl_node;
 
     char * ident;
@@ -100,3 +100,4 @@ typedef struct _node_s {
 typedef node_s * node_t;
 
 #endif
+

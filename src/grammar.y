@@ -180,7 +180,7 @@ listtypedecl:
             }
             | listtypedecl TOK_COMMA decl
             {
-              $$ = NULL;
+              $$ = $3;
               printf("listtypedecl\n");
             }
             ;
@@ -210,7 +210,7 @@ main:
 listinst:
         listinstnonnull
         {
-          $$ = NULL;
+          $$ = $1;
           printf("listinst");
         }
         |
@@ -310,7 +310,7 @@ exp:
 	}
     | TOK_MINUS exp %prec TOK_MINUS
     {
-    	$$ = make_node(NODE_MINUS, 1, $2);
+    	$$ = make_node(NODE_UMINUS, 1, $2);
 	}
     | exp TOK_GE exp
     {
@@ -367,32 +367,32 @@ exp:
 	}
     | TOK_LPAR exp TOK_RPAR
     {
-    	$$ = make_node(NODE_LPAR, 1, $2);
-	}
+    	$$ = $2;
+    }
     | ident TOK_AFFECT exp
     {
-    	$$ = make_node(NODE_AFFECT, 1, $1, $3);
+    	$$ = make_node(NODE_AFFECT, 2, $1, $3);
 	}
     | TOK_INTVAL
     {
     	$$ = make_node(NODE_INTVAL, 0);
-	}
+    }
     | TOK_TRUE
     {
-    	$$ = make_node(NODE_TRUE, 0);
-	}
+    	$$ = NULL;
+    }
     | TOK_FALSE
     {
-    	$$ = make_node(NODE_FALSE, 0);
-	}
+    	$$ = NULL;
+    }
     | TOK_STRING
     {
-    	$$ = make_node(NODE_STRING, 0);
-	}
+    	$$ = make_node(NODE_STRINGVAL, 0);
+    }
     | ident
     {
     	$$ = $1;
-	}
+    }
     ;
 
 printparam_list:
@@ -411,7 +411,7 @@ printparam:
       {
     			$$ = $1;
 			}
-            | TOK_STRING
+      | TOK_STRING
             {
 			    $$ = make_node(NODE_STRINGVAL, 0);
 			}
@@ -434,43 +434,46 @@ node_t make_node(node_nature nature , int nbArg, ...)
 {
 	printf("\n--> nature noeud courant %s\n", node_nature2string(nature));
   printf("\nnombre argument   : %d\n", nbArg);
+
 	int i = 0;
 
 	// allocation de memoire pour le noeud
 	node_t nouveau_noeud = malloc(sizeof(node_t));
 
-
+  nouveau_noeud->nature = nature;
+  nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
 
 	// ------ On cree les fils ------
   if (nbArg > 0){
     nouveau_noeud -> opr = (node_t *)malloc(nbArg * sizeof(node_t));
+
+    if( !nouveau_noeud -> opr ){
+      printf("allocaiton fils non reussite");
+      exit(0);
+    }
+
     va_list arg_noeud;
     va_start(arg_noeud, nbArg);
 
+
     for( i = 0; i < nbArg; i++){
-      node_t temp = va_arg(arg_noeud, node_t);
-      if(!temp)
+      nouveau_noeud->opr[i] = (node_t) va_arg(arg_noeud, node_t);
+      //ode_t temp = va_arg(arg_noeud, node_t);
+      if(!nouveau_noeud->opr[i])
       {
         printf("\n----null\n");
       }
       else
       {
-        printf("\n--> nature noeud fils : %s\n", node_nature2string(temp->nature));
+        //printf("\n--> nature noeud fils : %d\n", node_nature2string(nouveau_noeud->opr[i]->nature));
+        printf("win!!\n");
       }
     }
     va_end(arg_noeud);
   }
 
-	/*for (i = 0; i < nbArg; i++) {
-		//*((nouveau_noeud -> opr) + i) = va_arg(arg_noeud, node_t); // tableau de pointeur vers les enfants
-		node_t temp = va_arg(arg_noeud, node_t);
-		if(!temp){
-			printf("----nature non null %p\n\n", temp);
-		}
-		else{
-			printf("null!\n");
-		}
-  }*/
+
+
 
 /*	// ------ On remplie le noeud ------
 nouveau_noeud -> nature = nature;

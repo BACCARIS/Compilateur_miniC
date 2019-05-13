@@ -1592,7 +1592,7 @@ yyreduce:
   case 13:
 #line 182 "grammar.y" /* yacc.c:1646  */
     {
-              (yyval.ptr) = NULL;
+              (yyval.ptr) = (yyvsp[0].ptr);
               printf("listtypedecl\n");
             }
 #line 1599 "y.tab.c" /* yacc.c:1646  */
@@ -1629,7 +1629,7 @@ yyreduce:
   case 17:
 #line 212 "grammar.y" /* yacc.c:1646  */
     {
-          (yyval.ptr) = NULL;
+          (yyval.ptr) = (yyvsp[0].ptr);
           printf("listinst");
         }
 #line 1636 "y.tab.c" /* yacc.c:1646  */
@@ -1801,7 +1801,7 @@ yyreduce:
   case 38:
 #line 312 "grammar.y" /* yacc.c:1646  */
     {
-    	(yyval.ptr) = make_node(NODE_MINUS, 1, (yyvsp[0].ptr));
+    	(yyval.ptr) = make_node(NODE_UMINUS, 1, (yyvsp[0].ptr));
 	}
 #line 1807 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1913,15 +1913,15 @@ yyreduce:
   case 52:
 #line 369 "grammar.y" /* yacc.c:1646  */
     {
-    	(yyval.ptr) = make_node(NODE_LPAR, 1, (yyvsp[-1].ptr));
-	}
+    	(yyval.ptr) = (yyvsp[-1].ptr);
+    }
 #line 1919 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
 #line 373 "grammar.y" /* yacc.c:1646  */
     {
-    	(yyval.ptr) = make_node(NODE_AFFECT, 1, (yyvsp[-2].ptr), (yyvsp[0].ptr));
+    	(yyval.ptr) = make_node(NODE_AFFECT, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
 	}
 #line 1927 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1930,31 +1930,31 @@ yyreduce:
 #line 377 "grammar.y" /* yacc.c:1646  */
     {
     	(yyval.ptr) = make_node(NODE_INTVAL, 0);
-	}
+    }
 #line 1935 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
 #line 381 "grammar.y" /* yacc.c:1646  */
     {
-    	(yyval.ptr) = make_node(NODE_TRUE, 0);
-	}
+    	(yyval.ptr) = NULL;
+    }
 #line 1943 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
 #line 385 "grammar.y" /* yacc.c:1646  */
     {
-    	(yyval.ptr) = make_node(NODE_FALSE, 0);
-	}
+    	(yyval.ptr) = NULL;
+    }
 #line 1951 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
 #line 389 "grammar.y" /* yacc.c:1646  */
     {
-    	(yyval.ptr) = make_node(NODE_STRING, 0);
-	}
+    	(yyval.ptr) = make_node(NODE_STRINGVAL, 0);
+    }
 #line 1959 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1962,7 +1962,7 @@ yyreduce:
 #line 393 "grammar.y" /* yacc.c:1646  */
     {
     	(yyval.ptr) = (yyvsp[0].ptr);
-	}
+    }
 #line 1967 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2244,43 +2244,46 @@ node_t make_node(node_nature nature , int nbArg, ...)
 {
 	printf("\n--> nature noeud courant %s\n", node_nature2string(nature));
   printf("\nnombre argument   : %d\n", nbArg);
+
 	int i = 0;
 
 	// allocation de memoire pour le noeud
 	node_t nouveau_noeud = malloc(sizeof(node_t));
 
-
+  nouveau_noeud->nature = nature;
+  nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
 
 	// ------ On cree les fils ------
   if (nbArg > 0){
     nouveau_noeud -> opr = (node_t *)malloc(nbArg * sizeof(node_t));
+
+    if( !nouveau_noeud -> opr ){
+      printf("allocaiton fils non reussite");
+      exit(0);
+    }
+
     va_list arg_noeud;
     va_start(arg_noeud, nbArg);
 
+
     for( i = 0; i < nbArg; i++){
-      node_t temp = va_arg(arg_noeud, node_t);
-      if(!temp)
+      nouveau_noeud->opr[i] = (node_t) va_arg(arg_noeud, node_t);
+      //ode_t temp = va_arg(arg_noeud, node_t);
+      if(!nouveau_noeud->opr[i])
       {
         printf("\n----null\n");
       }
       else
       {
-        printf("\n--> nature noeud fils : %s\n", node_nature2string(temp->nature));
+        //printf("\n--> nature noeud fils : %d\n", node_nature2string(nouveau_noeud->opr[i]->nature));
+        printf("win!!\n");
       }
     }
     va_end(arg_noeud);
   }
 
-	/*for (i = 0; i < nbArg; i++) {
-		//*((nouveau_noeud -> opr) + i) = va_arg(arg_noeud, node_t); // tableau de pointeur vers les enfants
-		node_t temp = va_arg(arg_noeud, node_t);
-		if(!temp){
-			printf("----nature non null %p\n\n", temp);
-		}
-		else{
-			printf("null!\n");
-		}
-  }*/
+
+
 
 /*	// ------ On remplie le noeud ------
 nouveau_noeud -> nature = nature;
