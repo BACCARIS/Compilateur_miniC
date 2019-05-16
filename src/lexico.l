@@ -26,7 +26,7 @@ char * infile = "test.c";
 LETTRE              [A-Za-z]
 CHIFFRE             [0-9]
 CHIFFRE_NON_NUL     [1-9]
-ENTIER_DEC          0|({CHIFFRE_NON_NUL}{CHIFFRE})*
+ENTIER_DEC          0|{CHIFFRE_NON_NUL}({CHIFFRE})*|{CHIFFRE}
 LETTRE_HEXA         [A-Fa-f]
 SIGNE               -?
 ENTIER_HEXA         0x({CHIFFRE}|{LETTRE_HEXA})
@@ -35,7 +35,7 @@ ENTIER              {SIGNE}({ENTIER_DEC}|{ENTIER_HEXA})
 
 IDF                 {LETTRE}(_|{LETTRE}|{CHIFFRE})*
 CHAINE_CAR          [\x20-\x21\x22-\x5c]
-CHAINE              '"' (CHAINE_CAR|'\"'|'\n')* '"'
+CHAINE              \"(\\.|[^"\\])*\"
 
 
 %%

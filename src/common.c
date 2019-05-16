@@ -28,7 +28,6 @@ static int32_t dump_tree2dot_rec(FILE * f, node_t n, int32_t node_num) {
         fprintf(f, "    N%d [shape=record, label=\"{{NULL}}\"];\n", node_num);
         return node_num;
     }
-
     switch (n->nature) {
         case NODE_IDENT:
             {
@@ -65,7 +64,7 @@ static int32_t dump_tree2dot_rec(FILE * f, node_t n, int32_t node_num) {
         case NODE_LIST:
             fprintf(f, "    N%d [shape=record, label=\"{{NODE LIST}}\"];\n", node_num);
             break;
-        case NODE_PROGRAM:
+        case NODE_PROGRAM: 
         case NODE_BLOCK:
         case NODE_DECLS:
         case NODE_DECL:

@@ -2,7 +2,7 @@
 EXE = minicc
 UTILS = utils
 
-CFLAGS = -O0 -g -std=c99 -DYY_NO_LEAKS
+CFLAGS = -O0 -g -fPIC -no-pie -std=c99 -DYY_NO_LEAKS
 INCLUDE = -I$(UTILS)
 
 all: minicc
@@ -14,7 +14,7 @@ y.tab.c: grammar.y defs.h
 	yacc -d $<
 
 lex.y.cc: lexico.l defs.h
-	lex $<
+	lex -d $<
 
 common.o: common.c common.h defs.h
 	gcc $(CFLAGS) $(INCLUDE) -o $@ -c $<
