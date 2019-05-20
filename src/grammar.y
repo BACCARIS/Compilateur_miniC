@@ -439,94 +439,91 @@ ident:
 
 node_t make_node(node_nature nature , int nbArg, ...)
 {
-  //node_t nouveau_noeud = malloc(sizeof(node_t));
-  //nouveau_noeud->nature = nature;
-
-  //nouveau_noeud->nops = nbArg;
 	printf("\n\n\n--> nature noeud courant %s\n", node_nature2string(nature));
-  printf("nombre argument   : %d\n", nbArg);
+	printf("nombre argument   : %d\n", nbArg);
 
 	int i = 0;
 
 	// allocation de memoire pour le noeud
-	node_t nouveau_noeud = malloc(sizeof(node_t));
+	node_t nouveau_noeud = malloc(sizeof(node_s));
 
-  nouveau_noeud->nature = nature;
-  nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
-
-
+	nouveau_noeud -> nature = nature;
+	nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
 
 	// ------ On cree les fils ------
-  if (nbArg > 0){
-    nouveau_noeud -> opr = (node_t *)malloc(nbArg * sizeof(node_t));
+	if (nbArg > 0){
+		nouveau_noeud -> opr = malloc(nbArg * sizeof(node_s*));
 
-    if( !nouveau_noeud -> opr ){
-      printf("allocaiton fils non reussite");
-      exit(0);
-    }
+		if( !nouveau_noeud -> opr ){
+			printf("allocation fils non reussite");
+			exit(0);
+		}
 
-    va_list arg_noeud;
-    va_start(arg_noeud, nbArg);
+		va_list arg_noeud;
+		va_start(arg_noeud, nbArg);
 
-    for( i = 1; i <= nbArg; i++){
-     
-    }
+		//node_t depile = va_arg(arg_noeud, node_t);
 
-    for( i = 1; i <= nbArg; i++){
-       nouveau_noeud->opr[i] = va_arg(arg_noeud, node_t);
+		for( i = 0; i < nbArg; i++){
+			nouveau_noeud->opr[i] = va_arg(arg_noeud, node_t);
 
-      //nouveau_noeud->opr[i] = va_arg(arg_noeud, node_t);
-      if(nouveau_noeud->opr[i]== NULL)
-      {
-        printf("------>nil/null\n");
-      }
-      else
-      {
-        //provoque segfault si $$=null
-        printf("nature fils : %s\n", node_nature2string(nouveau_noeud->opr[i]->nature));
-      }
-    }
-    va_end(arg_noeud);
+			if(nouveau_noeud->opr[i]== NULL){
+				printf("------>nil/null\n");
+			}
+			else{
+				//provoque segfault si $$=null
+				//printf("nature fils : %s\n", node_nature2string(nouveau_noeud->opr[i]->nature));
+				if(!nouveau_noeud->opr[i]->nature){
+					printf("nature fils : NONE");
+					nouveau_noeud->opr[i]->nature = NONE;
+				}
+				else{
+					printf("nature fils : %s\n", node_nature2string(nouveau_noeud->opr[i]->nature));
+				}
+			}
+		}
+		va_end(arg_noeud);
 
-    if(nature == NODE_PROGRAM)
-    {
-      //printf("fils program : %s\n", node_nature2string(nouveau_noeud->opr[0]->nature));
-      //dump_tree(nouveau_noeud, "output.dot");
-    }
+		if(nature == NODE_PROGRAM){
+			//printf("fils program : %s\n", node_nature2string(nouveau_noeud->opr[0]->nature));
+			//dump_tree(nouveau_noeud, "output.dot");
+		}
+	}
 
-  }
-
-
-
-
-/*	// ------ On remplie le noeud ------
-nouveau_noeud -> nature = nature;
+	/*	// ------ On remplie le noeud ------
+	nouveau_noeud -> nature = nature;
 	nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
 
 	nouveau_noeud -> lineno = yylineno;
 
 	if( nature == NODE_IDENT)
 	{
-		nouveau_noeud -> ident = yylval.strval;
+	nouveau_noeud -> ident = yylval.strval;
 	}
 
 	if( nature == NODE_TYPE){
-		nouveau_noeud -> type = yylval.ptr -> type;
+	nouveau_noeud -> type = yylval.ptr -> type;
 	}
 
 	if( nature == NODE_INTVAL || nature == NODE_BOOLVAL ){
-		nouveau_noeud -> value = (int64_t)yylval.intval;
+	nouveau_noeud -> value = (int64_t)yylval.intval;
 	}
 
 	if( nature == NODE_STRINGVAL){
-		nouveau_noeud -> str = yylval.strval; //  A REVOIR
+	nouveau_noeud -> str = yylval.strval; //  A REVOIR
 	}
 
 	if( nature == NODE_STRINGVAL){
-		nouveau_noeud -> value = (int64_t)yylval.strval;
+	nouveau_noeud -> value = (int64_t)yylval.strval;
 	}
 
 	*/
+
+
+	if(nature == NODE_PROGRAM){
+		//printf("fils program : %s\n", node_nature2string(nouveau_noeud->opr[0]->nature));
+		//dump_tree(nouveau_noeud, "output.dot");
+	}
 
     return nouveau_noeud;
 }
@@ -536,7 +533,7 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
 {
   node_t nouveau_noeud = malloc(sizeof(node_t));
   nouveau_noeud->nature = nature;
-   printf("nature  : %s\n", node_nature2string(nouveau_noeud->nature));
+  printf("nature  : %s\n", node_nature2string(nouveau_noeud->nature));
   va_list arg_noeud;
   va_start(arg_noeud, nbArg);
 

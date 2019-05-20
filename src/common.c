@@ -104,8 +104,9 @@ static int32_t dump_tree2dot_rec(FILE * f, node_t n, int32_t node_num) {
             fprintf(f, "    N%d [shape=record, label=\"{{NODE %s|Type: %s|Nb. ops: %d}}\"];\n", node_num, node_nature2string(n->nature), node_type2string(n->type), n->nops);
             break;
         default:
-            printf("*** Error in %s: unknow nature : %s\n", __func__, node_nature2string(n->nature));
-            assert(false);
+            //printf("*** Error in %s: unknow nature : %s\n", __func__, node_nature2string(n->nature));
+            //assert(false);
+        	break;
     }
 
     n->node_num = node_num;
