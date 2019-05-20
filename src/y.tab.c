@@ -2189,8 +2189,6 @@ node_t make_node(node_nature nature , int nbArg, ...)
 		va_list arg_noeud;
 		va_start(arg_noeud, nbArg);
 
-		//node_t depile = va_arg(arg_noeud, node_t);
-
 		for( i = 0; i < nbArg; i++){
 			nouveau_noeud->opr[i] = va_arg(arg_noeud, node_t);
 
@@ -2249,7 +2247,7 @@ node_t make_node(node_nature nature , int nbArg, ...)
 
 	if(nature == NODE_PROGRAM){
 		//printf("fils program : %s\n", node_nature2string(nouveau_noeud->opr[0]->nature));
-		dump_tree(nouveau_noeud, "output.dot");
+		//dump_tree(nouveau_noeud, "output.dot");
 	}
 
     return nouveau_noeud;
