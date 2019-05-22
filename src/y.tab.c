@@ -2164,6 +2164,29 @@ yyreturn:
 
 /* à compléter : fonctions de création des noeuds de l'arbre */
 
+node_t make_node_null(node_t i_am_null){
+	i_am_null = malloc(sizeof(node_s));
+	i_am_null -> nature = NONE;
+    i_am_null -> type = TYPE_NONE;
+
+    i_am_null -> value = 0;
+    i_am_null -> offset = 0;
+    i_am_null -> global_decl = false;
+
+    i_am_null -> nops = 0;
+
+    i_am_null -> lineno = yylineno;
+    i_am_null -> stack_size = 0;
+
+    i_am_null -> opr = NULL;
+
+    i_am_null -> decl_node = NULL;
+
+    i_am_null -> ident = NULL;
+    i_am_null -> str = NULL;
+    return i_am_null;
+}
+
 node_t make_node(node_nature nature , int nbArg, ...)
 {
 	printf("\n\n\n--> nature noeud courant %s\n", node_nature2string(nature));
@@ -2193,33 +2216,21 @@ node_t make_node(node_nature nature , int nbArg, ...)
 			nouveau_noeud->opr[i] = va_arg(arg_noeud, node_t);
 
 			if(nouveau_noeud->opr[i]== NULL){
-				printf("------>nil/null\n");
+				nouveau_noeud->opr[i] = make_node_null(nouveau_noeud->opr[i]);
 			}
-			else{
-				//provoque segfault si $$=null
-				//printf("nature fils : %s\n", node_nature2string(nouveau_noeud->opr[i]->nature));
-				if(!nouveau_noeud->opr[i]->nature){
-					printf("nature fils : NONE");
-					nouveau_noeud->opr[i]->nature = NONE;
-				}
-				else{
-					printf("nature fils : %s\n", node_nature2string(nouveau_noeud->opr[i]->nature));
-				}
-			}
+			printf("nature fils : %s\n", node_nature2string(nouveau_noeud->opr[i]->nature));
 		}
 		va_end(arg_noeud);
 
 		if(nature == NODE_PROGRAM){
 			//printf("fils program : %s\n", node_nature2string(nouveau_noeud->opr[0]->nature));
-			//dump_tree(nouveau_noeud, "output.dot");
+			dump_tree(nouveau_noeud, "output.dot");
 		}
 	}
 
 	/*	// ------ On remplie le noeud ------
 	nouveau_noeud -> nature = nature;
 	nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
-
-	nouveau_noeud -> lineno = yylineno;
 
 	if( nature == NODE_IDENT)
 	{
@@ -2256,8 +2267,11 @@ node_t make_node(node_nature nature , int nbArg, ...)
 
 node_t make_final_node(node_nature nature , int nbArg, ...)
 {
-  node_t nouveau_noeud = malloc(sizeof(node_t));
+  node_t nouveau_noeud = NULL;
+  nouveau_noeud = make_node_null(nouveau_noeud);
+
   nouveau_noeud->nature = nature;
+
   printf("nature  : %s\n", node_nature2string(nouveau_noeud->nature));
   va_list arg_noeud;
   va_start(arg_noeud, nbArg);
@@ -2272,6 +2286,7 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
 
     case NODE_IDENT : 
     {
+    	nouveau_noeud->ident = yylval.strval;
      
     }
 
@@ -2279,10 +2294,42 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
     {
 
     }
+    case NODE_STRINGVAL : 
+    {
+
+    }
+
+
   }
 
   return nouveau_noeud;
 }
+
+
+
+
+
+ /*node_nature nature;
+    node_type type;
+
+    int64_t value;
+    int32_t offset;
+    bool global_decl;
+    int32_t lineno;
+    int32_t stack_size;
+
+    int32_t nops;
+    struct _node_s ** opr;
+
+    struct _node_s * decl_node;
+
+    char * ident;
+    char * str;
+
+    // Pour l'afichage du graphe
+    int32_t node_num;*/
+
+
 
 
 void analyse_tree(node_t root) {
