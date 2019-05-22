@@ -109,60 +109,81 @@ digraph global_vars {
     N17 -> N35
     edge[tailclip=true];
     N16 -> N17
-    N40 [shape=record, label="{{NODE FOR|Nb. ops: 4}}"];
-    N41 [shape=record, label="{{NODE AFFECT|Type: TYPE NONE|Nb. ops: 2}}"];
-    N42 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    N40 [shape=record, label="{{NODE LIST}}"];
+    N41 [shape=record, label="{{NODE FOR|Nb. ops: 4}}"];
+    N42 [shape=record, label="{{NODE AFFECT|Type: TYPE NONE|Nb. ops: 2}}"];
+    N43 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    edge[tailclip=true];
+    N42 -> N43
+    N44 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: s|Offset: 0}}"];
+    edge[tailclip=true];
+    N42 -> N44
     edge[tailclip=true];
     N41 -> N42
-    N43 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: s|Offset: 0}}"];
+    N45 [shape=record, label="{{NODE LT|Type: TYPE NONE|Nb. ops: 2}}"];
+    N46 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
     edge[tailclip=true];
-    N41 -> N43
+    N45 -> N46
+    N47 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: e|Offset: 0}}"];
+    edge[tailclip=true];
+    N45 -> N47
+    edge[tailclip=true];
+    N41 -> N45
+    N48 [shape=record, label="{{NODE AFFECT|Type: TYPE NONE|Nb. ops: 2}}"];
+    N49 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    edge[tailclip=true];
+    N48 -> N49
+    N50 [shape=record, label="{{NODE PLUS|Type: TYPE NONE|Nb. ops: 2}}"];
+    N51 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    edge[tailclip=true];
+    N50 -> N51
+    N52 [shape=record, label="{{NODE INTVAL|Type: TYPE NONE}|{Value: 0}}"];
+    edge[tailclip=true];
+    N50 -> N52
+    edge[tailclip=true];
+    N48 -> N50
+    edge[tailclip=true];
+    N41 -> N48
+    N53 [shape=record, label="{{NODE BLOCK|Nb. ops: 2}}"];
+    edge[tailclip=true];
+    N53 -> N54
+    N55 [shape=record, label="{{NODE AFFECT|Type: TYPE NONE|Nb. ops: 2}}"];
+    N56 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: sum|Offset: 0}}"];
+    edge[tailclip=true];
+    N55 -> N56
+    N57 [shape=record, label="{{NODE PLUS|Type: TYPE NONE|Nb. ops: 2}}"];
+    N58 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: sum|Offset: 0}}"];
+    edge[tailclip=true];
+    N57 -> N58
+    N59 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    edge[tailclip=true];
+    N57 -> N59
+    edge[tailclip=true];
+    N55 -> N57
+    edge[tailclip=true];
+    N53 -> N55
+    edge[tailclip=true];
+    N41 -> N53
     edge[tailclip=true];
     N40 -> N41
-    N44 [shape=record, label="{{NODE LT|Type: TYPE NONE|Nb. ops: 2}}"];
-    N45 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    N60 [shape=record, label="{{NODE PRINT|Nb. ops: 1}}"];
+    N61 [shape=record, label="{{NODE LIST}}"];
+    N62 [shape=record, label="{{NODE LIST}}"];
+    N63 [shape=record, label="{{NODE STRINGVAL|Type: TYPE NONE}|{val: sum : }}"];
     edge[tailclip=true];
-    N44 -> N45
-    N46 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: e|Offset: 0}}"];
+    N62 -> N63
+    N64 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: sum|Offset: 0}}"];
     edge[tailclip=true];
-    N44 -> N46
+    N62 -> N64
     edge[tailclip=true];
-    N40 -> N44
-    N47 [shape=record, label="{{NODE AFFECT|Type: TYPE NONE|Nb. ops: 2}}"];
-    N48 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    N61 -> N62
+    N65 [shape=record, label="{{NODE STRINGVAL|Type: TYPE NONE}|{val: \n}}"];
     edge[tailclip=true];
-    N47 -> N48
-    N49 [shape=record, label="{{NODE PLUS|Type: TYPE NONE|Nb. ops: 2}}"];
-    N50 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
+    N61 -> N65
     edge[tailclip=true];
-    N49 -> N50
-    N51 [shape=record, label="{{NODE INTVAL|Type: TYPE NONE}|{Value: 0}}"];
+    N60 -> N61
     edge[tailclip=true];
-    N49 -> N51
-    edge[tailclip=true];
-    N47 -> N49
-    edge[tailclip=true];
-    N40 -> N47
-    N52 [shape=record, label="{{NODE BLOCK|Nb. ops: 2}}"];
-    edge[tailclip=true];
-    N52 -> N53
-    N54 [shape=record, label="{{NODE AFFECT|Type: TYPE NONE|Nb. ops: 2}}"];
-    N55 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: sum|Offset: 0}}"];
-    edge[tailclip=true];
-    N54 -> N55
-    N56 [shape=record, label="{{NODE PLUS|Type: TYPE NONE|Nb. ops: 2}}"];
-    N57 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: sum|Offset: 0}}"];
-    edge[tailclip=true];
-    N56 -> N57
-    N58 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: i|Offset: 0}}"];
-    edge[tailclip=true];
-    N56 -> N58
-    edge[tailclip=true];
-    N54 -> N56
-    edge[tailclip=true];
-    N52 -> N54
-    edge[tailclip=true];
-    N40 -> N52
+    N40 -> N60
     edge[tailclip=true];
     N16 -> N40
     edge[tailclip=true];

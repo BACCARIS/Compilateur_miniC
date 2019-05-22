@@ -2228,34 +2228,6 @@ node_t make_node(node_nature nature , int nbArg, ...)
 		}
 	}
 
-	/*	// ------ On remplie le noeud ------
-	nouveau_noeud -> nature = nature;
-	nouveau_noeud -> nops = nbArg; 	// nombre d enfants du noeud
-
-	if( nature == NODE_IDENT)
-	{
-	nouveau_noeud -> ident = yylval.strval;
-	}
-
-	if( nature == NODE_TYPE){
-	nouveau_noeud -> type = yylval.ptr -> type;
-	}
-
-	if( nature == NODE_INTVAL || nature == NODE_BOOLVAL ){
-	nouveau_noeud -> value = (int64_t)yylval.intval;
-	}
-
-	if( nature == NODE_STRINGVAL){
-	nouveau_noeud -> str = yylval.strval; //  A REVOIR
-	}
-
-	if( nature == NODE_STRINGVAL){
-	nouveau_noeud -> value = (int64_t)yylval.strval;
-	}
-
-	*/
-
-
 	if(nature == NODE_PROGRAM){
 		//printf("fils program : %s\n", node_nature2string(nouveau_noeud->opr[0]->nature));
 		//dump_tree(nouveau_noeud, "output.dot");
@@ -2296,6 +2268,7 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
     }
     case NODE_STRINGVAL : 
     {
+    	nouveau_noeud->str = yylval.strval;
 
     }
 
