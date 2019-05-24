@@ -2302,14 +2302,45 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
     // Pour l'afichage du graphe
     int32_t node_num;*/
 
+// Global bool variable to indicate if we are dealing with global decls or not
+bool global_decl_var = true;
+node_type type_courant = TYPE_NONE; 
 
-
-
-void analyse_tree(node_t root) {
-    /* à compléter */
-
+void dfs(node_t root)
+{
+	for(int i = 0; i < root->nops; i++)
+	{
+		dfs(root->opr[i]);
+	}
 }
 
+
+void analyse_tree(node_s* root) {
+    /* à compléter */
+	switch(root->nature) 
+		{
+			case NODE_PROGRAM : 
+				push_global_context();
+				break;
+			case NODE_IDENT:
+				root->global_decl = global_decl_var;
+				root->type = type_courant;
+				break;
+			case NODE_FUNC :
+				global_decl_var = false;
+				break;
+			case NODE_TYPE : 
+				type_courant = root->type;
+				break;
+
+		} 
+	
+
+	for(int i = 0; i < root->nops; i++)
+	{
+		analyse_tree(root->opr[i]);
+	}
+}
 
 
 
