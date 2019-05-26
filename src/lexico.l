@@ -113,8 +113,12 @@ int yywrap(void) {
 
 
 int main(int argc, char ** argv) {
-    /* à compléter */
-    // ...
+
+    infile = argv[1];
+    if(infile == NULL){
+        printf("Error: input file not given\n\nCorrect Usage: ./minicc <infile>\n");
+        return 1;
+    }
 
 
     yyin = fopen(infile, "r");

@@ -2249,11 +2249,6 @@ node_t make_node(node_nature nature , int nbArg, ...)
 		}
 	}
 
-	if(nature == NODE_PROGRAM){
-		//printf("fils program : %s\n", node_nature2string(nouveau_noeud->opr[0]->nature));
-		//dump_tree(nouveau_noeud, "output.dot");
-	}
-
     return nouveau_noeud;
 }
 
@@ -2269,70 +2264,37 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
   va_list arg_noeud;
   va_start(arg_noeud, nbArg);
 
-  switch(nature)
-  {
-    case NODE_TYPE : 
-    {
-      nouveau_noeud-> type = va_arg(arg_noeud, node_type);
-      break;
-    }
+  switch(nature){
 
-    case NODE_IDENT : 
-    {
+    case NODE_TYPE :
+    	nouveau_noeud-> type = va_arg(arg_noeud, node_type);
+    	break;
+
+    case NODE_IDENT :
     	nouveau_noeud->ident = yylval.strval;
-      break;
-    }
+    	break;
 
     case NODE_INTVAL : 
-    {
-      nouveau_noeud->value = yylval.intval;
-      break;
-    }
+    	nouveau_noeud->value = yylval.intval;
+    	break;
+
     case NODE_STRINGVAL : 
-    {
-    	nouveau_noeud->str = yylval.strval;
+		nouveau_noeud->str = yylval.strval;
+		break;
 
-    }
     case NODE_BOOLVAL : 
-    {
-      if("true" == va_arg(arg_noeud, char*))
-      {
-        nouveau_noeud->value = 1;
-      }
-      else
-      {
-        nouveau_noeud->value = 0;
-      }
-      break;
-    }
-  }
+		if("true" == va_arg(arg_noeud, char*)){
+			nouveau_noeud->value = 1;
+		}
+		else{
+			nouveau_noeud->value = 0;
+		}
+		break;
+	}
 
-  return nouveau_noeud;
+	return nouveau_noeud;
 }
 
-
-
-
-
- /*node_nature nature;
-    node_type type;
-
-    int64_t value;
-    int32_t offset;
-    bool global_decl;
-    int32_t lineno;
-    int32_t stack_size;
-
-    int32_t nops;
-    struct _node_s ** opr;
-
-    struct _node_s * decl_node;
-
-    char * ident;
-    char * str;
-
-    // Pour l'afichage du graphe
-    int32_t node_num;*/
 
 // Global bool variable to indicate if we are dealing with global decls or not
 bool global_decl_var = true;
@@ -2342,116 +2304,95 @@ bool decl_var = true;
 //env_add_element = -1 -> déjà déclarée dans le contexte local
 void analyse_tree(node_t root) {
     /* à compléter */
-	switch(root->nature) 
-		{
-			case NODE_PROGRAM : 
-				push_global_context();
-				break;
+	switch(root->nature){
+		case NODE_PROGRAM : 
+			push_global_context();
+			break;
+		case NODE_IDENT:
+			//informations recueillies grace au variables globales 
+			root->global_decl = global_decl_var;
+			root->type = type_courant;
 
+			//si declaration en cours
+			if(decl_var)
+			{
+				int32_t var_context = env_add_element(root->ident, root, 4);
 
-			case NODE_IDENT:
+				//variable déja déclarée dans ce contexte
+				if(var_context == -1){
+					char* buffer;
+					sprintf(buffer,"Variable '%s' deja declaree dans ce contexte", root->ident);
+					yyerror(buffer);
+				}
+				else{
+					root->offset = var_context;
+					root->decl_node = NULL;
+				}
+			}
+        	//si declaration non en cours
+			else
+			{
+				int32_t var_context = env_add_element(root->ident, root, 4);
+				root->offset = -1;
+				root->decl_node = (node_t)malloc(sizeof(node_t));
+				root->decl_node = get_decl_node(root->ident);
 
+				//pas de declaration trouvee
+				if(!root->decl_node){
+					char* buffer;
+					sprintf(buffer, "Variable '%s' non declaree", root->ident);
+					yyerror(buffer);
+				}
+			}
 
-        //informations recueillies grace au variables globales 
-				root->global_decl = global_decl_var;
-				root->type = type_courant;
+			//si ident main
+			if(!strcmp("main",root->ident)){
+				root->offset = -1;
+				if(root->type != TYPE_VOID){
+					yyerror("Fonction main n'est pas de type void");
+				}
+			}
+        	break;
 
-        //si declaration en cours
-        if(decl_var)
-        {
-          int32_t var_context = env_add_element(root->ident, root, 4);
-          
-          //variable déja déclarée dans ce contexte
-          if(var_context == -1)
-          {
-            char* buffer;
-            sprintf(buffer,"Variable '%s' deja declaree dans ce contexte", root->ident);
-            yyerror(buffer);
-          }
-          else
-          {
-            printf("DECL  : §§§§§§§§§§§§§§§§§§§§§§%s\n", root->ident );
-            root->offset = var_context;
-            root->decl_node = NULL;
-          }
+		case NODE_DECL : 
+			decl_var = true;
+			if((root->opr[0]->type != root->opr[1]->type)){
+				char* buffer;
+				sprintf(buffer, "Variable de type %s est initialisee a un type %s", 
+				node_type2string(root->opr[0]->type), 
+				node_type2string(root->opr[1]->type));
+				yyerror(buffer);
+			}
+			break;
+		case NODE_AFFECT : 
+			if(root->opr[0]->type != root->opr[1]->type){
+				char* buffer;
+				sprintf(buffer, "Variable de type %s est affectee a un type %s", 
+				node_type2string(root->opr[0]->type), 
+				node_type2string(root->opr[1]->type));
+				yyerror(buffer);
+			}
+			break;
+		case NODE_FUNC :
+			reset_env_current_offset();
+			global_decl_var = false;
+			root->global_decl = global_decl_var;
+			break;
 
-        }
-        //si declaration non en cours
-        else
-        {
-          int32_t var_context = env_add_element(root->ident, root, 4);
-          root->offset = -1;
-          root->decl_node = (node_t)malloc(sizeof(node_t));
-          root->decl_node = get_decl_node(root->ident);
+		case NODE_TYPE : 
+			type_courant = root->type;
+			break;
 
-          printf("§§§§§§§§§§§§§§§§§§§§§§%s\n", root->decl_node->ident );
-          //pas de declaration trouvee
-          if(!root->decl_node)
-          {
-            char* buffer;
-            sprintf(buffer, "Variable '%s' non declaree", root->ident);
-            yyerror(buffer);
-          }
-        }
+		case NODE_BLOCK :
+			push_context();
+			break;
+	} 
 
-        //si ident main
-        if(!strcmp("main",root->ident))
-        {
-          root->offset = -1;
-          if(root->type != TYPE_VOID)
-          {
-            yyerror("Fonction main n'est pas de type void");
-          }
-        }
-        break;
-
-
-      case NODE_DECL : 
-        decl_var = true;
-        if((root->opr[0]->type != root->opr[1]->type))
-        {
-          char* buffer;
-          sprintf(buffer, "Variable de type %s est initialisee a un type %s", 
-            node_type2string(root->opr[0]->type), 
-            node_type2string(root->opr[1]->type));
-          yyerror(buffer);
-        }
-        break;
-
-      case NODE_AFFECT : 
-        if(root->opr[0]->type != root->opr[1]->type)
-        {
-          char* buffer;
-          sprintf(buffer, "Variable de type %s est affectee a un type %s", 
-            node_type2string(root->opr[0]->type), 
-            node_type2string(root->opr[1]->type));
-          yyerror(buffer);
-        }
-        break;
-			case NODE_FUNC :
-        reset_env_current_offset();
-				global_decl_var = false;
-        root->global_decl = global_decl_var;
-				break;
-
-      //case NODE_IN
-
-			case NODE_TYPE : 
-				type_courant = root->type;
-				break;
-
-      case NODE_BLOCK :
-        push_context();
-        break;
-		} 
-
-	for(int i = 0; i < root->nops; i++)
-	{
+	for(int i = 0; i < root->nops; i++){
 		analyse_tree(root->opr[i]);
 	}
 
-  switch(root->nature)
-  {
+  switch(root->nature) {
     case NODE_FUNC : 
       global_decl_var = false;
       root->global_decl = global_decl_var;
@@ -2467,10 +2408,9 @@ void analyse_tree(node_t root) {
   }
 }
 
-void arbreFinal(node_t root)
-{
-      if(root->nature == NODE_PROGRAM){
-      dump_tree(root, "apres_passe_1.dot");
+void arbreFinal(node_t root){
+    if(root->nature == NODE_PROGRAM){
+		dump_tree(root, "apres_passe_1.dot");
     }
 }
 
