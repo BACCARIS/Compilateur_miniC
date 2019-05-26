@@ -2337,8 +2337,9 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
 // Global bool variable to indicate if we are dealing with global decls or not
 bool global_decl_var = true;
 node_type type_courant = TYPE_INT; 
+bool decl_var = true;
 
-
+//env_add_element = -1 -> déjà déclarée dans le contexte local
 void analyse_tree(node_t root) {
     /* à compléter */
 	switch(root->nature) 
@@ -2348,49 +2349,98 @@ void analyse_tree(node_t root) {
 				break;
 
 
-
 			case NODE_IDENT:
+
+
         //informations recueillies grace au variables globales 
 				root->global_decl = global_decl_var;
 				root->type = type_courant;
 
-        //offset courant
-        root->offset = get_env_current_offset();
-        
-        //decl_node : ident correspondant à la déclaration
-        root->decl_node = get_decl_node(root->ident);
-                                                                                                                                                                                                                                                                                                                          
-        if(root->decl_node)
-        { 
-          root->offset = -1;
-        }
-        else if(strcmp("main", root->ident) == 0)
+        //si declaration en cours
+        if(decl_var)
         {
-          root->offset = -1;
-          //add_element si non déclaré
-          //env_add_element(root->ident, root, 4);
+          int32_t var_context = env_add_element(root->ident, root, 4);
+          
+          //variable déja déclarée dans ce contexte
+          if(var_context == -1)
+          {
+            char* buffer;
+            sprintf(buffer,"Variable '%s' deja declaree dans ce contexte", root->ident);
+            yyerror(buffer);
+          }
+          else
+          {
+            printf("DECL  : §§§§§§§§§§§§§§§§§§§§§§%s\n", root->ident );
+            root->offset = var_context;
+            root->decl_node = NULL;
+          }
+
         }
+        //si declaration non en cours
         else
         {
-          root->offset = env_add_element(root->ident, root, 4);
+          int32_t var_context = env_add_element(root->ident, root, 4);
+          root->offset = -1;
+          root->decl_node = (node_t)malloc(sizeof(node_t));
+          root->decl_node = get_decl_node(root->ident);
+
+          printf("§§§§§§§§§§§§§§§§§§§§§§%s\n", root->decl_node->ident );
+          //pas de declaration trouvee
+          if(!root->decl_node)
+          {
+            char* buffer;
+            sprintf(buffer, "Variable '%s' non declaree", root->ident);
+            yyerror(buffer);
+          }
         }
-				break;
+
+        //si ident main
+        if(!strcmp("main",root->ident))
+        {
+          root->offset = -1;
+          if(root->type != TYPE_VOID)
+          {
+            yyerror("Fonction main n'est pas de type void");
+          }
+        }
+        break;
 
 
+      case NODE_DECL : 
+        decl_var = true;
+        if((root->opr[0]->type != root->opr[1]->type))
+        {
+          char* buffer;
+          sprintf(buffer, "Variable de type %s est initialisee a un type %s", 
+            node_type2string(root->opr[0]->type), 
+            node_type2string(root->opr[1]->type));
+          yyerror(buffer);
+        }
+        break;
+
+      case NODE_AFFECT : 
+        if(root->opr[0]->type != root->opr[1]->type)
+        {
+          char* buffer;
+          sprintf(buffer, "Variable de type %s est affectee a un type %s", 
+            node_type2string(root->opr[0]->type), 
+            node_type2string(root->opr[1]->type));
+          yyerror(buffer);
+        }
+        break;
 			case NODE_FUNC :
-      reset_env_current_offset();
+        reset_env_current_offset();
 				global_decl_var = false;
         root->global_decl = global_decl_var;
 				break;
 
-
+      //case NODE_IN
 
 			case NODE_TYPE : 
 				type_courant = root->type;
 				break;
 
       case NODE_BLOCK :
-      
         push_context();
         break;
 		} 
@@ -2406,6 +2456,13 @@ void analyse_tree(node_t root) {
       global_decl_var = false;
       root->global_decl = global_decl_var;
       root->offset =  get_env_current_offset();
+      break;
+
+    case NODE_BLOCK : 
+      pop_context();
+      break;
+    case NODE_DECL : 
+      decl_var = false;
       break;
   }
 }
