@@ -113,14 +113,12 @@ program:
         listdeclnonnull maindecl  
         {
             $$ = make_node(NODE_PROGRAM, 2, $1, $2);
-            printf("PROGRAM\n");
             analyse_tree($$);
             arbreFinal($$);
         }
         | maindecl
         {
             $$ = make_node(NODE_PROGRAM, 2, NULL, $1 );
-            printf("PROGRAMnull\n");
             analyse_tree($$);
             arbreFinal($$);
         }
@@ -130,13 +128,10 @@ listdecl:
         listdeclnonnull
         {
           $$ = $1;
-          printf("listdeclnonnull\n");
-
         }
         |
         {
           $$ = NULL; 
-          printf("listdeclnull\n");
         }
         ;
 
@@ -145,12 +140,10 @@ listdeclnonnull:
                 vardecl
                 {
                   $$ = $1;
-                  printf("listdeclnonnull\n");
                 }
                 | listdeclnonnull vardecl
                 {
                 	$$ = make_node(NODE_LIST, 2, $1, $2);
-                  printf("listdeclnonnull\n");
                 }
                 ;
 
@@ -158,7 +151,6 @@ vardecl:
         type listtypedecl TOK_SEMICOL
         {
         	$$ = make_node(NODE_DECLS, 2, $1, $2);
-          printf("vardecl\n");
         }
         ;
 
@@ -166,17 +158,14 @@ type:
     TOK_INT
     {
     	 $$ = make_final_node(NODE_TYPE, 1, TYPE_INT);
-       printf("typeInt\n");
     }
     | TOK_BOOL
     {
     	 $$ = make_final_node(NODE_TYPE, 1, TYPE_BOOL);
-       printf("typeBool\n");
     }
     | TOK_VOID
     {
      	$$ = make_final_node(NODE_TYPE, 1, TYPE_VOID);
-      printf("typeVoid\n");
 	}
     ;
 
@@ -184,26 +173,22 @@ listtypedecl:
             decl
             {
               $$ = $1;
-              printf("listtypedecl\n");
             }
             | listtypedecl TOK_COMMA decl
             {
               $$ = make_node(NODE_LIST, 2, $1, $3);
-              printf("listtypedecl\n");
             }
             ;
 
 decl:
     ident
     {
-      printf("decl\n");
     	$$ = make_node(NODE_DECL, 2, $1, NULL);
       
     }
     | ident TOK_AFFECT expr
     {
     	$$ = make_node(NODE_DECL, 2, $1, $3);
-      printf("TOK_AFFECT\n");
     }
 
     ;
@@ -212,8 +197,6 @@ maindecl:
     type ident TOK_LPAR TOK_RPAR block
     {
     	$$ = make_node(NODE_FUNC, 3, $1, $2, $5);
-      printf("main\n");
-
     }
     ;
 
@@ -221,12 +204,10 @@ listinst:
         listinstnonnull
         {
           $$ = $1;
-          printf("listinst\n");
         }
         |
         {
         	$$ = NULL;
-          printf("listinstnull\n");
         }
         ;
 
@@ -234,68 +215,56 @@ listinstnonnull :
         inst
 				{
 				    $$ = $1;
-            printf("listinstnonnull\n");
 				}
         | listinstnonnull inst
         {
-				    $$ = make_node(NODE_LIST, 2, $1, $2);
-            printf("listinstnonnull\n");
+				  $$ = make_node(NODE_LIST, 2, $1, $2);
 				}
                 ;
 
 inst            :
         expr TOK_SEMICOL
 				{
-				    $$ = $1;
-            printf("inst\n");
+				  $$ = $1;
 				}
-                | TOK_IF TOK_LPAR expr TOK_RPAR inst %prec TOK_THEN
-                {
-				    $$ = make_node(NODE_IF, 2, $3, $5);
-            printf("inst\n");
+        | TOK_IF TOK_LPAR expr TOK_RPAR inst %prec TOK_THEN
+        {
+				  $$ = make_node(NODE_IF, 2, $3, $5);
 				}
-                | TOK_IF TOK_LPAR expr TOK_RPAR inst TOK_ELSE inst
-                {
-				    $$ = make_node(NODE_IF, 3, $3, $5, $7);
-            printf("inst\n");
+        | TOK_IF TOK_LPAR expr TOK_RPAR inst TOK_ELSE inst
+        {
+				  $$ = make_node(NODE_IF, 3, $3, $5, $7);
 				}
-                | TOK_WHILE TOK_LPAR expr TOK_RPAR inst
-             	{
-				    $$ = make_node(NODE_WHILE, 2, $3, $5);
-            printf("inst\n");
+        | TOK_WHILE TOK_LPAR expr TOK_RPAR inst
+        {
+				  $$ = make_node(NODE_WHILE, 2, $3, $5);
+        }
+        | TOK_FOR TOK_LPAR expr TOK_SEMICOL expr TOK_SEMICOL expr TOK_RPAR inst
+        {
+				  $$ = make_node(NODE_FOR, 4, $3, $5, $7, $9);   
 				}
-                | TOK_FOR TOK_LPAR expr TOK_SEMICOL expr TOK_SEMICOL expr TOK_RPAR inst
-                {
-				    $$ = make_node(NODE_FOR, 4, $3, $5, $7, $9);
-            printf("inst\n");
-				}
-                | TOK_DO inst TOK_WHILE TOK_LPAR expr TOK_RPAR TOK_SEMICOL
-                {
-				    $$ = make_node(NODE_DOWHILE, 2, $5, $2);
-            printf("inst\n");
-				}
-                | block
-                {
-				    $$ = $1;
-            printf("inst\n");
-				}
-                | TOK_SEMICOL
-                {
-                  $$ = NULL;
-                  printf("inst\n");
-                }
-                | TOK_PRINT TOK_LPAR listparamprint TOK_RPAR TOK_SEMICOL
-                {
-				    $$ = make_node(NODE_PRINT, 1, $3);
-            printf("inst\n");
-				}
-                ;
+        | TOK_DO inst TOK_WHILE TOK_LPAR expr TOK_RPAR TOK_SEMICOL
+        {
+				  $$ = make_node(NODE_DOWHILE, 2, $5, $2);
+        }
+        | block
+        {
+				  $$ = $1;
+        }
+        | TOK_SEMICOL
+        {
+          $$ = NULL;
+        }
+        | TOK_PRINT TOK_LPAR listparamprint TOK_RPAR TOK_SEMICOL
+        {
+				  $$ = make_node(NODE_PRINT, 1, $3);
+        }
+        ;
 
 block:
     TOK_LACC listdecl listinst TOK_RACC
     {
     	$$ = make_node(NODE_BLOCK, 2, $2, $3);
-      printf("block\n");
     }
     ;
 
@@ -303,104 +272,92 @@ expr:
     expr TOK_MUL expr
     {
       $$ = make_node(NODE_MUL, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_DIV expr
     {
-      $$ = make_node(NODE_DIV, 2, $1, $3);
-      printf("exp\n");
+      $$ = make_node(NODE_DIV, 2, $1, $3);;
     }
     | expr TOK_PLUS expr
     {
       $$ = make_node(NODE_PLUS, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_MINUS expr
     {
       $$ = make_node(NODE_MINUS, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_MOD expr
     {
       $$ = make_node(NODE_MOD, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_LT expr
     {
       $$ = make_node(NODE_LT, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_GT expr
     {
       $$ = make_node(NODE_GT, 2, $1, $3);
-      printf("exp\n");
     }
     |
     TOK_MINUS expr %prec TOK_MINUS
     {
      //$$ = make_node(NODE_UMINUS, 1, $2);
-      printf("exp\n");
     }
     | expr TOK_GE expr
     {
       $$ = make_node(NODE_GE, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_LE expr
     {
       $$ = make_node(NODE_LE, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_EQ expr
     {
       $$ = make_node(NODE_EQ, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_NE expr
     {
       $$ = make_node(NODE_NE, 2, $1, $3);
-      printf("exp\n");
     }
     | expr TOK_AND expr
     {
       $$ = make_node(NODE_AND, 2, $1, $3);
-      printf("exp\n");
+    }
+    | expr TOK_BAND expr
+    {
+      $$ = make_node(NODE_BAND, 2, $1, $3);
     }
     | expr TOK_OR expr
     {
       $$ = make_node(NODE_OR, 2, $1, $3);
-      printf("exp\n");
+    }
+    | expr TOK_BOR expr
+    {
+      $$ = make_node(NODE_BOR, 2, $1, $3);
     }
     | ident TOK_AFFECT expr
     {
       $$ = make_node(NODE_AFFECT, 2, $1, $3);
-      printf("exp\n");
     }
     | TOK_INTVAL
     {
       $$ = make_final_node(NODE_INTVAL, 0);
-      printf("exp");
     }
     | TOK_TRUE
     {
       $$ = make_final_node(NODE_BOOLVAL, 1, "true");
-      printf("exp\n");
     }
     | TOK_FALSE
     {
       $$ = make_final_node(NODE_BOOLVAL, 1, "false");
-      printf("exp\n");
     }
     | TOK_STRING
     { 
       $$ = make_final_node(NODE_STRINGVAL, 0);
-      printf("exp\n");
     }
     |
     ident
     {
     	$$ = $1;
-      printf("exp\n");
     }
     | TOK_LPAR expr TOK_RPAR
     {
@@ -409,36 +366,31 @@ expr:
     ;
 
 listparamprint:
-                listparamprint TOK_COMMA paramprint
-                {
-    				$$ = make_node(NODE_LIST, 2, $1, $3);
-            printf("printparm_list\n");
+        listparamprint TOK_COMMA paramprint
+        {
+    			$$ = make_node(NODE_LIST, 2, $1, $3);
 				}
-                | paramprint
-                {
-    				$$ = $1;
-              printf("printparm_list\n"); 
+        | paramprint
+        {
+    			$$ = $1;
 				}
-                ;
+        ;
 
 paramprint:
       ident
       {
-    			$$ = $1;
-            printf("printparm");
+    		$$ = $1;
 			}
       | TOK_STRING
-            {
-			    $$ = make_final_node(NODE_STRINGVAL, 0);
-            printf("printparm\n");
+      {
+        $$ = make_final_node(NODE_STRINGVAL, 0);
 			}
-            ;
+      ;
 
 ident:
     TOK_IDENT
     {
     	$$ = make_final_node(NODE_IDENT, 0);
-        printf("ident\n");
     }
     ;
 
@@ -473,9 +425,6 @@ node_t make_node_null(node_t i_am_null){
 
 node_t make_node(node_nature nature , int nbArg, ...)
 {
-	printf("\n\n\n--> nature noeud courant %s\n", node_nature2string(nature));
-	printf("nombre argument   : %d\n", nbArg);
-
 	int i = 0;
 
 	// allocation de memoire pour le noeud
@@ -487,25 +436,19 @@ node_t make_node(node_nature nature , int nbArg, ...)
 	// ------ On cree les fils ------
 	if (nbArg > 0){
 		nouveau_noeud -> opr = malloc(nbArg * sizeof(node_s*));
-
-		if( !nouveau_noeud -> opr ){
-			printf("allocation fils non reussite");
-			exit(0);
-		}
-
 		va_list arg_noeud;
 		va_start(arg_noeud, nbArg);
 
 		for( i = 0; i < nbArg; i++){
-			nouveau_noeud->opr[i] = va_arg(arg_noeud, node_t);
+			nouveau_noeud -> opr[i] = va_arg(arg_noeud, node_t);
 
-			if(nouveau_noeud->opr[i]== NULL){
-				nouveau_noeud->opr[i] = make_node_null(nouveau_noeud->opr[i]);
+			if(nouveau_noeud -> opr[i]== NULL){
+				nouveau_noeud -> opr[i] = make_node_null(nouveau_noeud->opr[i]);
 			}
-			printf("nature fils : %s\n", node_nature2string(nouveau_noeud->opr[i]->nature));
 		}
 		va_end(arg_noeud);
 
+    //arbre pre-analyse
 		if(nature == NODE_PROGRAM){
 			dump_tree(nouveau_noeud, "apres_syntaxe.dot");
 		}
@@ -519,12 +462,34 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
 {
   node_t nouveau_noeud = NULL;
   nouveau_noeud = make_node_null(nouveau_noeud);
-
-  nouveau_noeud->nature = nature;
-
-  printf("nature  : %s\n", node_nature2string(nouveau_noeud->nature));
+  nouveau_noeud -> nature = nature;
   va_list arg_noeud;
   va_start(arg_noeud, nbArg);
+
+  switch(nature)
+  {
+    case NODE_TYPE : 
+    {
+      nouveau_noeud -> type = va_arg(arg_noeud, node_type);
+      break;
+    }
+
+    case NODE_IDENT : 
+    {
+    	nouveau_noeud -> ident = yylval.strval;
+      break;
+    }
+
+    case NODE_INTVAL : 
+    {
+      nouveau_noeud -> value = yylval.intval;
+      nouveau_noeud -> type = TYPE_INT;
+      break;
+    }
+    case NODE_STRINGVAL : 
+    {
+    	nouveau_noeud -> str = yylval.strval;
+      nouveau_noeud -> type = TYPE_STRING;
 
   switch(nature){
 
@@ -545,6 +510,21 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
 		break;
 
     case NODE_BOOLVAL : 
+D
+    {
+      nouveau_noeud->type = TYPE_BOOL;
+      if("true" == va_arg(arg_noeud, char*))
+      {
+        nouveau_noeud->value = 1;
+      }
+      else
+      {
+        nouveau_noeud->value = 0;
+      }
+      break;
+    }
+  }
+
 		if("true" == va_arg(arg_noeud, char*)){
 			nouveau_noeud->value = 1;
 		}
@@ -563,9 +543,108 @@ bool global_decl_var = true;
 node_type type_courant = TYPE_INT; 
 bool decl_var = true;
 
-//env_add_element = -1 -> déjà déclarée dans le contexte local
+
 void analyse_tree(node_t root) {
     /* à compléter */
+
+	switch(root->nature) 
+		{
+			case NODE_PROGRAM : 
+				push_global_context();
+				break;
+
+
+			case NODE_IDENT:
+        //informations recueillies grace au variables globales 
+				root->global_decl = global_decl_var;
+				root->type = type_courant;
+
+        //si declaration en cours
+        if(decl_var || !strcmp("main", root->ident))
+        {
+          //env_add_element = -1 -> déjà déclarée dans le contexte local
+          int32_t var_context = env_add_element(root->ident, root, 4);
+          
+          //variable déja déclarée dans ce contexte
+          if(var_context == -1)
+          {
+            char* buffer;
+            sprintf(buffer,"Variable '%s' deja declaree dans ce contexte", root->ident);
+            yyerror(buffer);
+          }
+          else
+          {
+            root->offset = var_context;
+            root->decl_node = NULL;
+          }
+
+        }
+        //si declaration non en cours
+        else
+        {
+          int32_t var_context = env_add_element(root->ident, root, 4);
+          root->offset = -1;
+          root->decl_node = get_decl_node(root->ident);
+          root->type = root->decl_node->type;
+
+          //pas de declaration trouvee
+          if(!root->decl_node)
+          {
+            char* buffer;
+            sprintf(buffer, "Variable '%s' non declaree", root->ident);
+            yyerror(buffer);
+          }
+        }
+
+        //si ident main
+        if(!strcmp("main",root->ident))
+        {
+          root->offset = -1;
+          if(root->type != TYPE_VOID)
+          {
+            yyerror("Fonction main n'est pas de type void");
+          }
+        }
+        break;
+
+
+      case NODE_DECL : 
+        decl_var = true;
+        break;
+
+
+
+
+			case NODE_FUNC :
+        reset_env_current_offset();
+				global_decl_var = false;
+        root->global_decl = global_decl_var;
+				break;
+
+			case NODE_TYPE : 
+				type_courant = root->type;
+				break;
+
+      case NODE_BOOLVAL : 
+        root->type = TYPE_BOOL;
+        break;
+
+      case NODE_INTVAL : 
+        root->type = TYPE_INT;
+        break;
+
+      case NODE_STRINGVAL : 
+        root->type = TYPE_STRING;
+        root->offset = add_string(root->str);
+        break;
+
+      case NODE_BLOCK :
+        push_context();
+        break;
+
+
+		} 
+
 	switch(root->nature){
 		case NODE_PROGRAM : 
 			push_global_context();
@@ -654,7 +733,13 @@ void analyse_tree(node_t root) {
 		analyse_tree(root->opr[i]);
 	}
 
+
+  //champ des parents après ceux des fils
+  switch(root->nature)
+  {
+
   switch(root->nature) {
+
     case NODE_FUNC : 
       global_decl_var = false;
       root->global_decl = global_decl_var;
@@ -664,9 +749,50 @@ void analyse_tree(node_t root) {
     case NODE_BLOCK : 
       pop_context();
       break;
+
+
+
     case NODE_DECL : 
       decl_var = false;
+      if(!root->opr[1])
+        if((root->opr[0]->type != root->opr[1]->type))
+        {
+          char* buffer;
+          sprintf(buffer, "Variable de type %s est initialisee a un type %s", 
+            node_type2string(root->opr[0]->type), 
+            node_type2string(root->opr[1]->type));
+          yyerror(buffer);
+        }
+        break;
+
+
+    case NODE_AFFECT : 
+      if((TYPE_VOID != root->opr[0]->type) &&(root->opr[0]->type != root->opr[1]->type))
+      {
+        char* buffer;
+        sprintf(buffer, "Variable de type %s est affectee a un type %s", 
+          node_type2string(root->opr[0]->type), 
+          node_type2string(root->opr[1]->type));
+        yyerror(buffer);
+      }
       break;
+
+    case NODE_PLUS : 
+      if(root->opr[0]->type != TYPE_INT || root->opr[1]->type != TYPE_INT)
+      {
+        char* buffer;
+        sprintf(buffer, "Une variable de type %s ne peut pas s'additionner à une variable de type %s", 
+          node_type2string(root->opr[0]->type), 
+          node_type2string(root->opr[1]->type));
+        yyerror(buffer);
+      }
+      else
+      {
+        root->type = TYPE_INT;
+      }
+      break;
+
+
   }
 }
 

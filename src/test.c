@@ -1,4 +1,4 @@
-int a;
+
 void main(){
-	a = "oui";
+	int a = 2;
 }
