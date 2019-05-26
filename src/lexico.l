@@ -53,11 +53,15 @@ CHAINE              \"(\\.|[^"\\])*\"
 "print"         return TOK_PRINT;
 "="             return TOK_AFFECT;
 ">="            return TOK_GE;
-"=<"            return TOK_LE;
+"<="            return TOK_LE;
 ">"             return TOK_GT;
 "<"             return TOK_LT;
 "=="            return TOK_EQ;
 "!="            return TOK_NE;
+"&&"            return TOK_AND;
+"&"             return TOK_BAND;
+"|"            return TOK_BOR;
+"||"            return TOK_OR;
 "+"             return TOK_PLUS;
 "-"             return TOK_MINUS;
 "*"             return TOK_MUL;

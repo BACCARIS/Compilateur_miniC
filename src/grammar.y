@@ -205,6 +205,7 @@ decl:
     	$$ = make_node(NODE_DECL, 2, $1, $3);
       printf("TOK_AFFECT\n");
     }
+
     ;
 
 maindecl:
@@ -400,6 +401,10 @@ expr:
     {
     	$$ = $1;
       printf("exp\n");
+    }
+    | TOK_LPAR expr TOK_RPAR
+    {
+      $$ = $2;
     }
     ;
 
@@ -635,6 +640,7 @@ void analyse_tree(node_t root) {
 
 
 			case NODE_FUNC :
+      reset_env_current_offset();
 				global_decl_var = false;
         root->global_decl = global_decl_var;
 				break;
@@ -646,7 +652,7 @@ void analyse_tree(node_t root) {
 				break;
 
       case NODE_BLOCK :
-      reset_env_current_offset();
+      
         push_context();
         break;
 		} 

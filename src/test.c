@@ -1,11 +1,7 @@
-
-int a = 0;
-
-
 void main(){
-	int a = 3;
-	if(true)
-	{
-		a = a+1;
-	}
+	int a = 0, b = 8;
+	a = (1 & b);
+	a = (1 | b);
+	a = (1 << b);
+	a = (b >> 1);
 }
