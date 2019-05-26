@@ -1,7 +1,8 @@
-int start = 0;
-int end = 100;
+int val = 28;
 void main()
 {
-	int i;
-	int s = start;
+	bool truc = true;
+	
+	int val;
+	truc = false;
 }

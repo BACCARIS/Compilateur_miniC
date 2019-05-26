@@ -47,7 +47,6 @@ digraph global_vars {
     N20 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: val|Offset: 0}}"];
     edge[tailclip=true];
     N19 -> N20
-    N21 [shape=record, label="{{NODE INTVAL|Type: TYPE NONE}|{Value: 15}}"];
     edge[tailclip=true];
     N19 -> N21
     edge[tailclip=true];
@@ -56,6 +55,13 @@ digraph global_vars {
     N11 -> N17
     edge[tailclip=true];
     N10 -> N11
+    N22 [shape=record, label="{{NODE AFFECT|Type: TYPE NONE|Nb. ops: 2}}"];
+    N23 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: truc|Offset: 0}}"];
+    edge[tailclip=true];
+    N22 -> N23
+    N24 [shape=record, label="{{NODE BOOLVAL|Type: TYPE NONE}|{Value: 0}}"];
+    edge[tailclip=true];
+    N22 -> N24
     edge[tailclip=true];
     N10 -> N22
     edge[tailclip=true];

@@ -5,7 +5,7 @@ digraph global_vars {
     edge[tailclip=true];
     N2 -> N3
     N4 [shape=record, label="{{NODE DECL|Nb. ops: 2}}"];
-    N5 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: val|Offset: 0}}"];
+    N5 [shape=record, label="{{NODE IDENT|Type: TYPE INT}|{<decl>Decl      |Ident: val|Offset: 0}}"];
     edge[tailclip=true];
     N4 -> N5
     N6 [shape=record, label="{{NODE INTVAL|Type: TYPE NONE}|{Value: 28}}"];
@@ -19,7 +19,7 @@ digraph global_vars {
     N8 [shape=record, label="{{NODE TYPE|Type: TYPE VOID}}"];
     edge[tailclip=true];
     N7 -> N8
-    N9 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: main|Offset: 0}}"];
+    N9 [shape=record, label="{{NODE IDENT|Type: TYPE VOID}|{<decl>Decl      |Ident: main|Offset: 0}}"];
     edge[tailclip=true];
     N7 -> N9
     N10 [shape=record, label="{{NODE BLOCK|Nb. ops: 2}}"];
@@ -29,7 +29,7 @@ digraph global_vars {
     edge[tailclip=true];
     N12 -> N13
     N14 [shape=record, label="{{NODE DECL|Nb. ops: 2}}"];
-    N15 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: truc|Offset: 0}}"];
+    N15 [shape=record, label="{{NODE IDENT|Type: TYPE BOOL}|{<decl>Decl      |Ident: truc|Offset: 4}}"];
     edge[tailclip=true];
     N14 -> N15
     N16 [shape=record, label="{{NODE BOOLVAL|Type: TYPE NONE}|{Value: 1}}"];
@@ -44,7 +44,7 @@ digraph global_vars {
     edge[tailclip=true];
     N17 -> N18
     N19 [shape=record, label="{{NODE DECL|Nb. ops: 2}}"];
-    N20 [shape=record, label="{{NODE IDENT|Type: TYPE NONE}|{<decl>Decl      |Ident: val|Offset: 0}}"];
+    N20 [shape=record, label="{{NODE IDENT|Type: TYPE INT}|{<decl>Decl      |Ident: val|Offset: 8}}"];
     edge[tailclip=true];
     N19 -> N20
     N21 [shape=record, label="{{NODE INTVAL|Type: TYPE NONE}|{Value: 15}}"];
