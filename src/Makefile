@@ -20,4 +20,4 @@ common.o: common.c common.h defs.h
 	gcc $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -f *.o
+	rm -f *.o *.dot
