@@ -91,6 +91,9 @@ CHAINE              \"(\\.|[^"\\])*\"
 
 
 [ \t\n]+
+
+[/]+.*
+
 . {
                 fprintf(stderr, "Error line %d: Lexical error\n", yylineno);
                 exit(1);

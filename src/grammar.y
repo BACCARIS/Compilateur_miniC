@@ -9,6 +9,7 @@
 
 #include "defs.h"
 #include "common.h"
+#define MAIN "main"
 
 
 /* Global variables */
@@ -187,7 +188,7 @@ listtypedecl:
             }
             | listtypedecl TOK_COMMA decl
             {
-              $$ = $3;
+              $$ = make_node(NODE_LIST, 2, $1, $3);
               printf("listtypedecl\n");
             }
             ;
@@ -602,29 +603,50 @@ void analyse_tree(node_t root) {
 			case NODE_PROGRAM : 
 				push_global_context();
 				break;
+
+
+
 			case NODE_IDENT:
+        //informations recueillies grace au variables globales 
 				root->global_decl = global_decl_var;
-
 				root->type = type_courant;
-        printf("type : %s\n", node_type2string(root->type));
+
+        //offset courant
         root->offset = get_env_current_offset();
-
+        
+        //decl_node : ident correspondant à la déclaration
         root->decl_node = get_decl_node(root->ident);
-
-        //add_element si non déclaré
-        env_add_element(root->ident, root, 4);
-        printf("ident : %s\n offset : %d\n\n\n",root->ident, get_env_current_offset());
+                                                                                                                                                                                                                                                                                                                          
+        if(root->decl_node)
+        { 
+          root->offset = -1;
+        }
+        else if(strcmp("main", root->ident) == 0)
+        {
+          root->offset = -1;
+          //add_element si non déclaré
+          //env_add_element(root->ident, root, 4);
+        }
+        else
+        {
+          root->offset = env_add_element(root->ident, root, 4);
+        }
 				break;
+
+
 			case NODE_FUNC :
 				global_decl_var = false;
         root->global_decl = global_decl_var;
-        reset_env_current_offset();
 				break;
+
+
+
 			case NODE_TYPE : 
 				type_courant = root->type;
-
 				break;
+
       case NODE_BLOCK :
+      reset_env_current_offset();
         push_context();
         break;
 		} 
@@ -633,6 +655,15 @@ void analyse_tree(node_t root) {
 	{
 		analyse_tree(root->opr[i]);
 	}
+
+  switch(root->nature)
+  {
+    case NODE_FUNC : 
+      global_decl_var = false;
+      root->global_decl = global_decl_var;
+      root->offset =  get_env_current_offset();
+      break;
+  }
 }
 
 void arbreFinal(node_t root)

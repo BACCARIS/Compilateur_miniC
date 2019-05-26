@@ -142,7 +142,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 33 "grammar.y" /* yacc.c:1909  */
+#line 34 "grammar.y" /* yacc.c:1909  */
 
     int32_t intval;
     char * strval;

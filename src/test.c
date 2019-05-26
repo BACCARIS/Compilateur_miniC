@@ -1,8 +1,11 @@
-int val = 28;
-void main()
-{
-	bool truc = true;
-	
-	int val;
-	truc = false;
+
+int a = 0;
+
+
+void main(){
+	int a = 3;
+	if(true)
+	{
+		a = a+1;
+	}
 }
