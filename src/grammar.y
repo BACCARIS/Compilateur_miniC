@@ -473,6 +473,8 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
       nouveau_noeud -> type = va_arg(arg_noeud, node_type);
       break;
     }
+<<<<<<< HEAD
+=======
 
     case NODE_IDENT : 
     {
@@ -496,21 +498,30 @@ node_t make_final_node(node_nature nature , int nbArg, ...)
     case NODE_TYPE :
     	nouveau_noeud-> type = va_arg(arg_noeud, node_type);
     	break;
+>>>>>>> 21d59c59716782c022a1edf5d1b37b0479d19595
 
-    case NODE_IDENT :
-    	nouveau_noeud->ident = yylval.strval;
-    	break;
+    case NODE_IDENT : 
+    {
+    	nouveau_noeud -> ident = yylval.strval;
+      break;
+    }
 
     case NODE_INTVAL : 
-    	nouveau_noeud->value = yylval.intval;
-    	break;
-
+    {
+      nouveau_noeud -> value = yylval.intval;
+      nouveau_noeud -> type = TYPE_INT;
+      break;
+    }
     case NODE_STRINGVAL : 
-		nouveau_noeud->str = yylval.strval;
-		break;
-
+    {
+    	nouveau_noeud -> str = yylval.strval;
+      nouveau_noeud -> type = TYPE_STRING;
+    }
     case NODE_BOOLVAL : 
+<<<<<<< HEAD
+=======
 D
+>>>>>>> 21d59c59716782c022a1edf5d1b37b0479d19595
     {
       nouveau_noeud->type = TYPE_BOOL;
       if("true" == va_arg(arg_noeud, char*))
@@ -523,6 +534,8 @@ D
       }
       break;
     }
+<<<<<<< HEAD
+=======
   }
 
 		if("true" == va_arg(arg_noeud, char*)){
@@ -534,7 +547,9 @@ D
 		break;
 	}
 
+>>>>>>> 21d59c59716782c022a1edf5d1b37b0479d19595
 	return nouveau_noeud;
+  }
 }
 
 
@@ -544,6 +559,11 @@ node_type type_courant = TYPE_INT;
 bool decl_var = true;
 
 
+<<<<<<< HEAD
+void analyse_tree(node_t root) 
+{
+    /* à compléter */
+=======
 void analyse_tree(node_t root) {
     /* à compléter */
 
@@ -685,49 +705,101 @@ void analyse_tree(node_t root) {
 					yyerror(buffer);
 				}
 			}
+>>>>>>> 21d59c59716782c022a1edf5d1b37b0479d19595
 
-			//si ident main
-			if(!strcmp("main",root->ident)){
-				root->offset = -1;
-				if(root->type != TYPE_VOID){
-					yyerror("Fonction main n'est pas de type void");
-				}
-			}
-        	break;
+	switch(root->nature) 
+		{
+			case NODE_PROGRAM : 
+				push_global_context();
+				break;
 
-		case NODE_DECL : 
-			decl_var = true;
-			if((root->opr[0]->type != root->opr[1]->type)){
-				char* buffer;
-				sprintf(buffer, "Variable de type %s est initialisee a un type %s", 
-				node_type2string(root->opr[0]->type), 
-				node_type2string(root->opr[1]->type));
-				yyerror(buffer);
-			}
-			break;
-		case NODE_AFFECT : 
-			if(root->opr[0]->type != root->opr[1]->type){
-				char* buffer;
-				sprintf(buffer, "Variable de type %s est affectee a un type %s", 
-				node_type2string(root->opr[0]->type), 
-				node_type2string(root->opr[1]->type));
-				yyerror(buffer);
-			}
-			break;
-		case NODE_FUNC :
-			reset_env_current_offset();
-			global_decl_var = false;
-			root->global_decl = global_decl_var;
-			break;
 
-		case NODE_TYPE : 
-			type_courant = root->type;
-			break;
+			case NODE_IDENT:
+        //informations recueillies grace au variables globales 
+				root->global_decl = global_decl_var;
+				root->type = type_courant;
 
-		case NODE_BLOCK :
-			push_context();
-			break;
-	} 
+        //si declaration en cours
+        if(decl_var || !strcmp("main", root->ident))
+        {
+          //env_add_element = -1 -> déjà déclarée dans le contexte local
+          int32_t var_context = env_add_element(root->ident, root, 4);
+          
+          //variable déja déclarée dans ce contexte
+          if(var_context == -1)
+          {
+            char* buffer;
+            sprintf(buffer,"Variable '%s' deja declaree dans ce contexte", root->ident);
+            yyerror(buffer);
+          }
+          else
+          {
+            root->offset = var_context;
+            root->decl_node = NULL;
+          }
+
+        }
+        //si declaration non en cours
+        else
+        {
+          int32_t var_context = env_add_element(root->ident, root, 4);
+          root->offset = -1;
+          root->decl_node = get_decl_node(root->ident);
+          root->type = root->decl_node->type;
+
+          //pas de declaration trouvee
+          if(!root->decl_node)
+          {
+            char* buffer;
+            sprintf(buffer, "Variable '%s' non declaree", root->ident);
+            yyerror(buffer);
+          }
+        }
+
+        //si ident main
+        if(!strcmp("main",root->ident))
+        {
+          root->offset = -1;
+          if(root->type != TYPE_VOID)
+          {
+            yyerror("Fonction main n'est pas de type void");
+          }
+        }
+        break;
+
+      case NODE_DECL : 
+        decl_var = true;
+        break;
+
+			case NODE_FUNC :
+        reset_env_current_offset();
+				global_decl_var = false;
+        root->global_decl = global_decl_var;
+				break;
+
+			case NODE_TYPE : 
+				type_courant = root->type;
+				break;
+
+      case NODE_BOOLVAL : 
+        root->type = TYPE_BOOL;
+        break;
+
+      case NODE_INTVAL : 
+        root->type = TYPE_INT;
+        break;
+
+      case NODE_STRINGVAL : 
+        root->type = TYPE_STRING;
+        root->offset = add_string(root->str);
+        break;
+
+      case NODE_BLOCK :
+        push_context();
+        break;
+      } 
+
+
 
 	for(int i = 0; i < root->nops; i++){
 		analyse_tree(root->opr[i]);
@@ -735,10 +807,15 @@ void analyse_tree(node_t root) {
 
 
   //champ des parents après ceux des fils
+<<<<<<< HEAD
+
+  switch(root ->nature) {
+=======
   switch(root->nature)
   {
 
   switch(root->nature) {
+>>>>>>> 21d59c59716782c022a1edf5d1b37b0479d19595
 
     case NODE_FUNC : 
       global_decl_var = false;
@@ -775,6 +852,24 @@ void analyse_tree(node_t root) {
           node_type2string(root->opr[1]->type));
         yyerror(buffer);
       }
+<<<<<<< HEAD
+      break;
+
+    case NODE_PLUS : 
+      if(root->opr[0]->type != TYPE_INT || root->opr[1]->type != TYPE_INT)
+      {
+        char* buffer;
+        sprintf(buffer, "Une variable de type %s ne peut pas s'additionner à une variable de type %s", 
+          node_type2string(root->opr[0]->type), 
+          node_type2string(root->opr[1]->type));
+        yyerror(buffer);
+      }
+      else
+      {
+        root->type = TYPE_INT;
+      }
+=======
+>>>>>>> 21d59c59716782c022a1edf5d1b37b0479d19595
       break;
 
     case NODE_PLUS : 
